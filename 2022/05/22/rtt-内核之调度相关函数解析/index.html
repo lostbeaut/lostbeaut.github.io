@@ -22,15 +22,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="适合自己的才是最好的">
+  <meta name="description" content="#include &lt;rtthread.h&gt;#include &lt;rthw.h&gt; #ifdef RT_USING_SMPrt_hw_spinlock_t _rt_critical_lock;#endif &#x2F;RT_USING_SMP&#x2F; rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];   &amp;">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rtt 内核之调度相关函数解析">
 <meta property="og:url" content="http://example.com/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E8%B0%83%E5%BA%A6%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0%E8%A7%A3%E6%9E%90/index.html">
 <meta property="og:site_name" content="恋人心">
-<meta property="og:description" content="适合自己的才是最好的">
+<meta property="og:description" content="#include &lt;rtthread.h&gt;#include &lt;rthw.h&gt; #ifdef RT_USING_SMPrt_hw_spinlock_t _rt_critical_lock;#endif &#x2F;RT_USING_SMP&#x2F; rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];   &amp;">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-22T13:56:55.000Z">
-<meta property="article:modified_time" content="2022-05-22T13:56:55.854Z">
+<meta property="article:modified_time" content="2022-05-22T13:58:23.972Z">
 <meta property="article:author" content="恋人心">
 <meta name="twitter:card" content="summary">
 
@@ -218,8 +218,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:56:55" itemprop="dateCreated datePublished" datetime="2022-05-22T21:56:55+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-22 21:56:55 / 修改时间：21:58:23" itemprop="dateCreated datePublished" datetime="2022-05-22T21:56:55+08:00">2022-05-22</time>
             </span>
 
           
@@ -240,7 +241,150 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>#include &lt;rtthread.h&gt;<br>#include &lt;rthw.h&gt;</p>
+<p>#ifdef RT_USING_SMP<br>rt_hw_spinlock_t _rt_critical_lock;<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<p>rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];   &#x2F;<em>线程优先级链表, 所有的线程都会安装优先级大小挂在不同的表上面</em>&#x2F;<br>rt_uint32_t rt_thread_ready_priority_group;    &#x2F;<em>优先级就绪分组</em>&#x2F;<br>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>&#x2F;* Maximum priority level, 256 *&#x2F;<br>rt_uint8_t rt_thread_ready_table[32];<br>#endif</p>
+<p>#ifndef RT_USING_SMP<br>extern volatile rt_uint8_t rt_interrupt_nest;<br>static rt_int16_t rt_scheduler_lock_nest;<br>struct rt_thread *rt_current_thread;<br>rt_uint8_t rt_current_priority;<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<p>rt_list_t rt_thread_defunct;</p>
+<p>获取 最高优先级的线程<br>static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)<br>{<br>    register struct rt_thread *highest_priority_thread;<br>    register rt_ubase_t highest_ready_priority;</p>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>    register rt_ubase_t number;</p>
+<pre><code>number = __rt_ffs(rt_thread_ready_priority_group) - 1;
+highest_ready_priority = (number &lt;&lt; 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
+</code></pre>
+<p>#else<br>    highest_ready_priority &#x3D; __rt_ffs(rt_thread_ready_priority_group) - 1;  &#x2F;<em>利用位图算法找到最高优先级的 线程,也就是数字最小的</em>&#x2F;<br>#endif</p>
+<pre><code>/* get highest ready priority thread */
+highest_priority_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
+                          struct rt_thread,
+                          tlist);   /*获取线程控制块的首地址*/
+
+*highest_prio = highest_ready_priority;  /*返回最高的优先级*/
+
+return highest_priority_thread;
+</code></pre>
+<p>}</p>
+<p>&#x2F;**</p>
+<ul>
+<li><p>@ingroup SystemInit</p>
+</li>
+<li><p>This function will startup scheduler. It will select one thread</p>
+</li>
+<li><p>with the highest priority level, then switch to it.<br> *&#x2F;<br>void rt_system_scheduler_start(void)<br>{<br> register struct rt_thread *to_thread;<br> rt_ubase_t highest_ready_priority;</p>
+<p> to_thread &#x3D; _get_highest_priority_thread(&amp;highest_ready_priority);</p>
+</li>
+</ul>
+<p>#ifdef RT_USING_SMP<br>    to_thread-&gt;oncpu &#x3D; rt_hw_cpu_id();<br>#else<br>    rt_current_thread &#x3D; to_thread;<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<pre><code>rt_schedule_remove_thread(to_thread);
+to_thread-&gt;stat = RT_THREAD_RUNNING;
+
+/* switch to new thread */
+</code></pre>
+<p>#ifdef RT_USING_SMP<br>    rt_hw_context_switch_to((rt_ubase_t)&amp;to_thread-&gt;sp, to_thread);<br>#else<br>    rt_hw_context_switch_to((rt_ubase_t)&amp;to_thread-&gt;sp);<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<pre><code>/* never come back */
+</code></pre>
+<p>}</p>
+<p>&#x2F;**</p>
+<ul>
+<li>@addtogroup Thread<br> *&#x2F;</li>
+</ul>
+<p>&#x2F;**@{*&#x2F;</p>
+<p>&#x2F;**</p>
+<ul>
+<li><p>This function will perform one schedule. It will select one thread</p>
+</li>
+<li><p>with the highest priority level, then switch to it.<br> *&#x2F;<br>void rt_schedule(void)<br>{<br> rt_base_t level;<br> struct rt_thread *to_thread;<br> struct rt_thread *from_thread;</p>
+<p> &#x2F;* disable interrupt *&#x2F;<br> level &#x3D; rt_hw_interrupt_disable();</p>
+<p> &#x2F;* check the scheduler is enabled or not <em>&#x2F;<br> if (rt_scheduler_lock_nest &#x3D;&#x3D; 0)   &#x2F;<em>调度没有上锁,即可以进行调度</em>&#x2F;<br> {<br> rt_ubase_t highest_ready_priority;<br><br> if (rt_thread_ready_priority_group !&#x3D; 0)   &#x2F;<em>有就绪的线程才能进行调度</em>&#x2F;<br> {<br>     &#x2F;</em> need_insert_from_thread: need to insert from_thread to ready queue <em>&#x2F;<br>     int need_insert_from_thread &#x3D; 0;<br><br>     to_thread &#x3D; _get_highest_priority_thread(&amp;highest_ready_priority);&#x2F;<em>获取优先级最高的线程控制块首地址</em>&#x2F;<br><br>     if ((rt_current_thread-&gt;stat &amp; RT_THREAD_STAT_MASK) &#x3D;&#x3D; RT_THREAD_RUNNING) &#x2F;<em>当前的线程是否在运行状态</em>&#x2F;<br>     {<br>         if (rt_current_thread-&gt;current_priority &lt; highest_ready_priority) &#x2F;*当前在运行的线程 优先级是否比 highest_ready_priority 高*&#x2F;<br>         {<br>             to_thread &#x3D; rt_current_thread;  &#x2F;*系统中优先级最高线程的依然是 rt_current_thread*&#x2F;<br>         }<br>         else<br>         {<br>             need_insert_from_thread &#x3D; 1;    &#x2F;*系统中优先级最高线程是to_thread, 需要插入*&#x2F;<br>         }<br>     }<br>     &#x2F;*to_thread 不等于 当前正在运行的线程 rt_current_thread, 说明需要调度,需要切换至高优先级线程to_thread *&#x2F;<br>     if (to_thread !&#x3D; rt_current_thread)<br>     {<br>         &#x2F;* if the destination thread is not the same as current thread *&#x2F;<br>         rt_current_priority &#x3D; (rt_uint8_t)highest_ready_priority;  &#x2F;*将最高优先级赋给 rt_current_priority*&#x2F;<br>         from_thread         &#x3D; rt_current_thread;   &#x2F;* 从 当前正在运行的线程 rt_current_thread 切换 *&#x2F;<br>         rt_current_thread   &#x3D; to_thread;           &#x2F;* 切换至 系统最高优先级线程to_thread *&#x2F;<br><br>         RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));<br><br>         if (need_insert_from_thread)<br>         {<br>             &#x2F;*线程from_thread已不在线程就绪表中, 将 from_thread 线程 插入线程就绪表尾部,等待下次调度 *&#x2F;<br>             rt_schedule_insert_thread(from_thread);<br>         }<br>         &#x2F;*将 需要调度的线程 to_thread 从线程就绪表中移除,马上进入运行状态,不参与线程调度 *&#x2F;<br>         rt_schedule_remove_thread(to_thread);<br><br>         &#x2F;*将线程 to_thread 设置为运行状态*&#x2F;<br>         to_thread-&gt;stat &#x3D; RT_THREAD_RUNNING | (to_thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);<br><br>         &#x2F;</em> switch to new thread *&#x2F;<br>         RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,<br>                 (“[%d]switch to priority#%d “<br>                  “thread:%.*s(sp:0x%08x), “<br>                  “from thread:%.*s(sp: 0x%08x)\n”,<br>                  rt_interrupt_nest, highest_ready_priority,<br>                  RT_NAME_MAX, to_thread-&gt;name, to_thread-&gt;sp,<br>                  RT_NAME_MAX, from_thread-&gt;name, from_thread-&gt;sp));</p>
+</li>
+</ul>
+<p>#ifdef RT_USING_OVERFLOW_CHECK<br>                _rt_scheduler_stack_check(to_thread);<br>#endif</p>
+<pre><code>            if (rt_interrupt_nest == 0)
+            &#123;
+                extern void rt_thread_handle_sig(rt_bool_t clean_state);
+                
+                /*从线程 from_thread 切换至 线程to_thread*/
+                rt_hw_context_switch((rt_ubase_t)&amp;from_thread-&gt;sp,
+                        (rt_ubase_t)&amp;to_thread-&gt;sp);
+</code></pre>
+<p>#ifdef RT_USING_SIGNALS<br>                    if (rt_current_thread-&gt;stat &amp; RT_THREAD_STAT_SIGNAL_PENDING)<br>                    {<br>                        extern void rt_thread_handle_sig(rt_bool_t clean_state);</p>
+<pre><code>                    rt_current_thread-&gt;stat &amp;= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
+                    rt_hw_interrupt_enable(level);
+
+                    /* check signal status */
+                    rt_thread_handle_sig(RT_TRUE);
+                &#125;
+                else
+                &#123;
+                    rt_hw_interrupt_enable(level);
+                &#125;
+</code></pre>
+<p>#else<br>                    &#x2F;* enable interrupt *&#x2F;<br>                    rt_hw_interrupt_enable(level);<br>#endif<br>                    goto __exit;<br>                }<br>                else<br>                {<br>                    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, (“switch in interrupt\n”));</p>
+<pre><code>                rt_hw_context_switch_interrupt((rt_ubase_t)&amp;from_thread-&gt;sp,
+                        (rt_ubase_t)&amp;to_thread-&gt;sp);
+            &#125;
+        &#125;
+        else
+        &#123;
+            rt_schedule_remove_thread(rt_current_thread);
+            rt_current_thread-&gt;stat = RT_THREAD_RUNNING | (rt_current_thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);
+        &#125;
+    &#125;
+&#125;
+
+/* enable interrupt */
+rt_hw_interrupt_enable(level);
+</code></pre>
+<p>__exit:<br>    return;<br>}</p>
+<p>线程插入<br>线程插入和移除主要是操作 线程控制块 rt_thread 中的 字段tlist,这是一个双向链表, 他可能挂在的地方有两个<br>1 是线程就绪链表 rt_thread_priority_table 中,此时线程是处于就绪态或者运行态<br>2 是 IPC 对象中, 即挂在 rt_ipc_object中的  suspend_thread 字段上, 此时线程处于挂起状态，IPC 对象被 信号量等内核对象继承<br>void rt_schedule_insert_thread(struct rt_thread *thread)<br>{<br>    register rt_base_t temp;</p>
+<pre><code>RT_ASSERT(thread != RT_NULL);
+
+/* disable interrupt */
+temp = rt_hw_interrupt_disable();
+
+/* it&#39;s current thread, it should be RUNNING thread */
+if (thread == rt_current_thread)
+&#123;
+    thread-&gt;stat = RT_THREAD_RUNNING | (thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);
+    goto __exit;
+&#125;
+
+/* READY thread, insert to ready queue */
+/*将线程 thread 状态设置为 就绪态*/
+thread-&gt;stat = RT_THREAD_READY | (thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);
+/* insert thread to ready list */
+/*将 线程 thread 插入到就绪链表 rt_thread_priority_table 尾部*/
+rt_list_insert_before(&amp;(rt_thread_priority_table[thread-&gt;current_priority]),
+                      &amp;(thread-&gt;tlist));
+
+RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, (&quot;insert thread[%.*s], the priority: %d\n&quot;,
+                                  RT_NAME_MAX, thread-&gt;name, thread-&gt;current_priority));
+
+/* set priority mask */
+</code></pre>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>    rt_thread_ready_table[thread-&gt;number] |&#x3D; thread-&gt;high_mask;<br>#endif<br>    rt_thread_ready_priority_group |&#x3D; thread-&gt;number_mask;</p>
+<p>__exit:<br>    &#x2F;* enable interrupt *&#x2F;<br>    rt_hw_interrupt_enable(temp);<br>}</p>
+<p>线程移除<br>线程插入和移除主要是操作 线程控制块 rt_thread 中的 字段tlist,这是一个双向链表, 他可能挂在的地方有两个<br>1 是线程就绪链表 rt_thread_priority_table 中,此时线程是处于就绪态或者运行态<br>2 是 IPC 对象中, 即挂在 rt_ipc_object中的  suspend_thread 字段上, 此时线程处于挂起状态，IPC 对象被 信号量等内核对象继承<br>void rt_schedule_remove_thread(struct rt_thread *thread)<br>{<br>    register rt_base_t level;</p>
+<pre><code>RT_ASSERT(thread != RT_NULL);
+
+/* disable interrupt */
+level = rt_hw_interrupt_disable();
+
+RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, (&quot;remove thread[%.*s], the priority: %d\n&quot;,
+                                  RT_NAME_MAX, thread-&gt;name,
+                                  thread-&gt;current_priority));
+
+/* remove thread from ready list */
+/*将线程 thread 从 就绪链表 rt_thread_priority_table 中移除, 主要是将线程控制块 thread 的 链表 tlist从就绪表中移除,同时连接该链表上下的节点*/
+rt_list_remove(&amp;(thread-&gt;tlist));
+if (rt_list_isempty(&amp;(rt_thread_priority_table[thread-&gt;current_priority])))
+&#123;
+</code></pre>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>        rt_thread_ready_table[thread-&gt;number] &amp;&#x3D; ~thread-&gt;high_mask;<br>        if (rt_thread_ready_table[thread-&gt;number] &#x3D;&#x3D; 0)<br>        {<br>            rt_thread_ready_priority_group &amp;&#x3D; ~thread-&gt;number_mask;<br>        }<br>#else<br>        rt_thread_ready_priority_group &amp;&#x3D; ~thread-&gt;number_mask;<br>#endif<br>    }</p>
+<pre><code>/* enable interrupt */
+rt_hw_interrupt_enable(level);
+</code></pre>
+<p>}</p>
+
     </div>
 
     

@@ -216,8 +216,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:57:38" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:38+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-22 21:57:38 / 修改时间：21:59:00" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:38+08:00">2022-05-22</time>
             </span>
 
           
@@ -231,7 +232,202 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <ol>
+<li>内核对象<br>&#x2F;**</li>
+</ol>
+<ul>
+<li>The object type can be one of the follows with specific</li>
+<li>macros enabled:</li>
+<li><ul>
+<li>Thread</li>
+</ul>
+</li>
+<li><ul>
+<li>Semaphore</li>
+</ul>
+</li>
+<li><ul>
+<li>Mutex</li>
+</ul>
+</li>
+<li><ul>
+<li>Event</li>
+</ul>
+</li>
+<li><ul>
+<li>MailBox</li>
+</ul>
+</li>
+<li><ul>
+<li>MessageQueue</li>
+</ul>
+</li>
+<li><ul>
+<li>MemHeap</li>
+</ul>
+</li>
+<li><ul>
+<li>MemPool</li>
+</ul>
+</li>
+<li><ul>
+<li>Device</li>
+</ul>
+</li>
+<li><ul>
+<li>Timer</li>
+</ul>
+</li>
+<li><ul>
+<li>Module</li>
+</ul>
+</li>
+<li><ul>
+<li>Unknown</li>
+</ul>
+</li>
+<li><ul>
+<li>Static<br> <em>&#x2F;<br>enum rt_object_class_type<br>{<br>RT_Object_Class_Null   &#x3D; 0,                         &#x2F;<em>*&lt; The object is not used. *&#x2F;<br>RT_Object_Class_Thread,                             &#x2F;**&lt; The object is a thread.       线程</em>&#x2F;<br>RT_Object_Class_Semaphore,                          &#x2F;**&lt; The object is a semaphore.    信号量</em>&#x2F;<br>RT_Object_Class_Mutex,                              &#x2F;<em>*&lt; The object is a mutex.        互斥量 *&#x2F;<br>RT_Object_Class_Event,                              &#x2F;**&lt; The object is a event.        事件</em>&#x2F;<br>RT_Object_Class_MailBox,                            &#x2F;<em><em>&lt; The object is a mail box.     邮箱</em>&#x2F;<br>RT_Object_Class_MessageQueue,                       &#x2F;</em>*&lt; The object is a message queue.消息队列 *&#x2F;<br>RT_Object_Class_MemHeap,                            &#x2F;<strong>&lt; The object is a memory heap *&#x2F;<br>RT_Object_Class_MemPool,                            &#x2F;**&lt; The object is a memory pool. *&#x2F;<br>RT_Object_Class_Device,                             &#x2F;</strong>&lt; The object is a device *&#x2F;<br>RT_Object_Class_Timer,                              &#x2F;<strong>&lt; The object is a timer. *&#x2F;<br>RT_Object_Class_Module,                             &#x2F;**&lt; The object is a module. *&#x2F;<br>RT_Object_Class_Unknown,                            &#x2F;</strong>&lt; The object is unknown. *&#x2F;<br>RT_Object_Class_Static &#x3D; 0x80                       &#x2F;**&lt; The object is a static object. *&#x2F;<br>};</li>
+</ul>
+</li>
+</ul>
+<p>2 .双向链表 </p>
+<p>&#x2F;**</p>
+<ul>
+<li>Double List structure<br> *&#x2F;<br>struct rt_list_node<br>{<br> struct rt_list_node *next;                          &#x2F;<em>*&lt; point to next node. 前节点 *&#x2F;<br> struct rt_list_node <em>prev;                          &#x2F;**&lt; point to prev node. 后节点</em>&#x2F;<br>};<br>typedef struct rt_list_node rt_list_t;                  &#x2F;</em>*&lt; Type for lists. *&#x2F;</li>
+</ul>
+<ol start="3">
+<li>内核对象</li>
+</ol>
+<p>&#x2F;**</p>
+<ul>
+<li>Base structure of Kernel object<br> <em>&#x2F;<br>struct rt_object<br>{<br> char       name[RT_NAME_MAX];                       &#x2F;**&lt; name of kernel object  名字</em>&#x2F;<br> rt_uint8_t type;                                    &#x2F;<em><em>&lt; type of kernel object  内核对象类型</em>&#x2F;<br> rt_uint8_t flag;                                    &#x2F;</em><em>&lt; flag of kernel object  标志</em>&#x2F;</li>
+</ul>
+<p>#ifdef RT_USING_MODULE<br>    void      *module_id;                               &#x2F;<em>*&lt; id of application module *&#x2F;<br>#endif<br>    rt_list_t  list;                                    &#x2F;**&lt; list node of kernel object  双向链表 挂在 对象容器中</em>&#x2F;<br>};<br>typedef struct rt_object *rt_object_t;                  &#x2F;**&lt; Type for kernel objects. *&#x2F;</p>
+<p>4.对象容器结构</p>
+<p> &#x2F;**</p>
+<ul>
+<li>The information of the kernel object<br> *&#x2F;<br>struct rt_object_information<br>{<br> enum rt_object_class_type type;                     &#x2F;<strong>&lt; object class type *&#x2F;<br> rt_list_t                 object_list;              &#x2F;**&lt; object list *&#x2F;<br> rt_size_t                 object_size;              &#x2F;</strong>&lt; object size *&#x2F;<br>};</li>
+</ul>
+<ol start="5">
+<li>定时器</li>
+</ol>
+<p>  &#x2F;**</p>
+<ul>
+<li><p>timer structure<br> <em>&#x2F;<br>struct rt_timer                                         属于面向对象的思想,子承父类  struct rt_object 是父类<br>{<br> struct rt_object parent;                            &#x2F;**&lt; inherit from rt_object ， 从父类rt_object 继承</em>&#x2F;</p>
+<p> rt_list_t        row[RT_TIMER_SKIP_LIST_LEVEL];</p>
+<p> void (*timeout_func)(void <em>parameter);              &#x2F;**&lt; timeout function                超时函数</em>&#x2F;<br> void            <em>parameter;                         &#x2F;**&lt; timeout function’s parameter    超时函数参数</em>&#x2F;</p>
+<p> rt_tick_t        init_tick;                         &#x2F;<em><em>&lt; timer timeout tick              初始时间 系统节拍</em>&#x2F;<br> rt_tick_t        timeout_tick;                      &#x2F;</em><em>&lt; timeout tick                    超时时间 系统节拍</em>&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_timer *rt_timer_t;</p>
+<p>6 .线程控制块<br>struct rt_thread                                        属于面向对象的思想,子承父类  struct rt_object 是父类<br>{<br>    &#x2F;* rt object <em>&#x2F;<br>    char        name[RT_NAME_MAX];                      &#x2F;**&lt; the name of thread  头部跟 rt_object 是一样的 继承至 rt_object</em>&#x2F;<br>    rt_uint8_t  type;                                   &#x2F;<em><em>&lt; type of object      内核类型</em>&#x2F;<br>    rt_uint8_t  flags;                                  &#x2F;</em>*&lt; thread’s flags *&#x2F;</p>
+<p>#ifdef RT_USING_MODULE<br>    void       *module_id;                              &#x2F;**&lt; id of application module *&#x2F;<br>#endif</p>
+<pre><code>rt_list_t   list;                                   /**&lt; the object list     注册时插入对象容器中*/
+rt_list_t   tlist;                                  /**&lt; the thread list     插入在 信号量 线程就绪表等中*/
+
+/* stack point and entry */
+void       *sp;                                     /**&lt; stack point         堆栈指针*/
+void       *entry;                                  /**&lt; entry */
+void       *parameter;                              /**&lt; parameter */
+void       *stack_addr;                             /**&lt; stack address */
+rt_uint32_t stack_size;                             /**&lt; stack size */
+
+/* error code */
+rt_err_t    error;                                  /**&lt; error code */
+
+rt_uint8_t  stat;                                   /**&lt; thread status */
+
+/* priority */
+rt_uint8_t  current_priority;                       /**&lt; current priority */
+rt_uint8_t  init_priority;                          /**&lt; initialized priority */
+</code></pre>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>    rt_uint8_t  number;<br>    rt_uint8_t  high_mask;<br>#endif<br>    rt_uint32_t number_mask;</p>
+<p>#if defined(RT_USING_EVENT)<br>    &#x2F;* thread event *&#x2F;<br>    rt_uint32_t event_set;<br>    rt_uint8_t  event_info;<br>#endif</p>
+<p>#if defined(RT_USING_SIGNALS)<br>    rt_sigset_t     sig_pending;                        &#x2F;**&lt; the pending signals *&#x2F;<br>    rt_sigset_t     sig_mask;                           &#x2F;**&lt; the mask bits of signal *&#x2F;</p>
+<pre><code>void            *sig_ret;                           /**&lt; the return stack pointer from signal */
+rt_sighandler_t *sig_vectors;                       /**&lt; vectors of signal handler */
+void            *si_list;                           /**&lt; the signal infor list */
+</code></pre>
+<p>#endif</p>
+<pre><code>rt_ubase_t  init_tick;                              /**&lt; thread&#39;s initialized tick */
+rt_ubase_t  remaining_tick;                         /**&lt; remaining tick */
+
+struct rt_timer thread_timer;                       /**&lt; built-in thread timer */
+
+void (*cleanup)(struct rt_thread *tid);             /**&lt; cleanup function when thread exit */
+
+/* light weight process if present */
+</code></pre>
+<p>#ifdef RT_USING_LWP<br>    void        *lwp;<br>#endif</p>
+<pre><code>rt_uint32_t user_data;                             /**&lt; private user data beyond this thread */
+</code></pre>
+<p>};<br>typedef struct rt_thread *rt_thread_t;</p>
+<ol start="7">
+<li>IPC对象, 从 rt_object 继承, IPC主要用于 线程间通信</li>
+</ol>
+<p>&#x2F;**</p>
+<ul>
+<li><p>Base structure of IPC object<br> <em>&#x2F;<br>struct rt_ipc_object<br>{<br> &#x2F;<em>从父类 rt_object 继承</em>&#x2F;                           属于面向对象的思想,子承父类  struct rt_object 是父类<br> struct rt_object parent;                            &#x2F;**&lt; inherit from rt_object   从 rt_object 继承</em>&#x2F;</p>
+<p> rt_list_t        suspend_thread;                    &#x2F;**&lt; threads pended on this resource , 线程请求挂起时会挂在这里 *&#x2F;</p>
+</li>
+</ul>
+<p>};</p>
+<ol start="8">
+<li>信号量, 线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;**</li>
+</ol>
+<ul>
+<li><p>Semaphore structure<br> <em>&#x2F;<br>struct rt_semaphore<br>{<br> &#x2F;<em>从 父类rt_ipc_object 继承</em>&#x2F;                       属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object  从 rt_ipc_object 继承</em>&#x2F;</p>
+<p> rt_uint16_t          value;                         &#x2F;<em><em>&lt; value of semaphore.      初始值</em>&#x2F;<br> rt_uint16_t          reserved;                      &#x2F;</em>*&lt; reserved field *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_semaphore *rt_sem_t;</p>
+<ol start="9">
+<li>互斥量, 线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;**</li>
+</ol>
+<ul>
+<li><p>Mutual exclusion (mutex) structure<br> *&#x2F;<br>struct rt_mutex<br>{<br> &#x2F;<em>从 父类rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> rt_uint16_t          value;                         &#x2F;**&lt; value of mutex *&#x2F;</p>
+<p> rt_uint8_t           original_priority;             &#x2F;**&lt; priority of last thread hold the mutex *&#x2F;<br> rt_uint8_t           hold;                          &#x2F;**&lt; numbers of thread hold the mutex *&#x2F;</p>
+<p> struct rt_thread    *owner;                         &#x2F;**&lt; current owner of mutex *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_mutex *rt_mutex_t;</p>
+<ol start="10">
+<li>事件，线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;*</li>
+</ol>
+<ul>
+<li><p>event structure<br> *&#x2F;<br>struct rt_event<br>{<br> &#x2F;<em>从父类 rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> rt_uint32_t          set;                           &#x2F;**&lt; event set *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_event *rt_event_t;</p>
+<ol start="11">
+<li>邮箱，线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;**</li>
+</ol>
+<ul>
+<li><p>mailbox structure<br> *&#x2F;<br>struct rt_mailbox<br>{<br> &#x2F;<em>从父类 rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> rt_uint32_t         *msg_pool;                      &#x2F;**&lt; start address of message buffer *&#x2F;</p>
+<p> rt_uint16_t          size;                          &#x2F;**&lt; size of message pool *&#x2F;</p>
+<p> rt_uint16_t          entry;                         &#x2F;<strong>&lt; index of messages in msg_pool *&#x2F;<br> rt_uint16_t          in_offset;                     &#x2F;**&lt; input offset of the message buffer *&#x2F;<br> rt_uint16_t          out_offset;                    &#x2F;</strong>&lt; output offset of the message buffer *&#x2F;</p>
+<p> rt_list_t            suspend_sender_thread;         &#x2F;**&lt; sender thread suspended on this mailbox *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_mailbox *rt_mailbox_t;</p>
+<ol start="12">
+<li>消息队列，线程间通信的内核对象,从 rt_ipc_object 继承</li>
+</ol>
+<p>&#x2F;**</p>
+<ul>
+<li><p>message queue structure<br> *&#x2F;<br>struct rt_messagequeue<br>{<br> &#x2F;<em>从父类 rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> void                *msg_pool;                      &#x2F;**&lt; start address of message queue *&#x2F;</p>
+<p> rt_uint16_t          msg_size;                      &#x2F;**&lt; message size of each message *&#x2F;<br> rt_uint16_t          max_msgs;                      &#x2F;**&lt; max number of messages *&#x2F;</p>
+<p> rt_uint16_t          entry;                         &#x2F;**&lt; index of messages in the queue *&#x2F;</p>
+<p> void                *msg_queue_head;                &#x2F;**&lt; list head *&#x2F;<br> void                *msg_queue_tail;                &#x2F;**&lt; list tail *&#x2F;<br> void                *msg_queue_free;                &#x2F;**&lt; pointer indicated the free node of queue *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_messagequeue *rt_mq_t;</p>
+
       
     </div>
 
@@ -275,8 +471,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:57:25" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:25+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-22 21:57:25 / 修改时间：21:58:48" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:25+08:00">2022-05-22</time>
             </span>
 
           
@@ -290,7 +487,223 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <p>用最直接的方式讲解  RTT 定时器的 工作原理, 不讲原理,直接分析代码<br>下面的看懂了，RTT 的定时器也就懂了</p>
+<p>&#x2F;* hard timer list *&#x2F;  这个 RT_TIMER_SKIP_LIST_LEVEL 一般值是 1<br>static rt_list_t rt_timer_list[RT_TIMER_SKIP_LIST_LEVEL];</p>
+<p>static void _rt_timer_init(rt_timer_t timer,<br>                           void (*timeout)(void *parameter),<br>                           void      *parameter,<br>                           rt_tick_t  time,<br>                           rt_uint8_t flag)<br>{<br>    int i;</p>
+<pre><code>/* set flag */
+timer-&gt;parent.flag  = flag;
+
+/* set deactivated */
+timer-&gt;parent.flag &amp;= ~RT_TIMER_FLAG_ACTIVATED;
+
+timer-&gt;timeout_func = timeout;
+timer-&gt;parameter    = parameter;
+
+timer-&gt;timeout_tick = 0;
+timer-&gt;init_tick    = time;
+
+/* initialize timer list */
+for (i = 0; i &lt; RT_TIMER_SKIP_LIST_LEVEL; i++)
+&#123;
+    rt_list_init(&amp;(timer-&gt;row[i]));
+&#125;
+</code></pre>
+<p>}</p>
+<p>rt_inline void _rt_timer_remove(rt_timer_t timer)<br>{<br>    int i;</p>
+<pre><code>for (i = 0; i &lt; RT_TIMER_SKIP_LIST_LEVEL; i++)
+&#123;
+    rt_list_remove(&amp;timer-&gt;row[i]);
+&#125;
+</code></pre>
+<p>}</p>
+<pre><code> /* init thread timer */
+</code></pre>
+<p> 在线程初始化时调用<br>   rt_timer_init(&amp;(thread-&gt;thread_timer),<br>                  thread-&gt;name,<br>                  rt_thread_timeout,<br>                  thread,<br>                  0,<br>                  RT_TIMER_FLAG_ONE_SHOT);</p>
+<p>&#x2F;**</p>
+<ul>
+<li><p>This function will initialize a timer, normally this function is used to</p>
+</li>
+<li><p>initialize a static timer object.</p>
+</li>
+<li></li>
+<li><p>@param timer the static timer object</p>
+</li>
+<li><p>@param name the name of timer</p>
+</li>
+<li><p>@param timeout the timeout function</p>
+</li>
+<li><p>@param parameter the parameter of timeout function</p>
+</li>
+<li><p>@param time the tick of timer</p>
+</li>
+<li><p>@param flag the flag of timer<br> *&#x2F;<br>void rt_timer_init(rt_timer_t  timer,<br>            const char *name,<br>            void (*timeout)(void *parameter),<br>            void       <em>parameter,<br>            rt_tick_t   time,<br>            rt_uint8_t  flag)<br>{<br> &#x2F;</em> timer check *&#x2F;<br> RT_ASSERT(timer !&#x3D; RT_NULL);</p>
+<p> &#x2F;* timer object initialization *&#x2F;<br> rt_object_init((rt_object_t)timer, RT_Object_Class_Timer, name);</p>
+<p> _rt_timer_init(timer, timeout, parameter, time, flag);</p>
+</li>
+</ul>
+<p>}<br>RTM_EXPORT(rt_timer_init);</p>
+<p>定时器结构, 从  struct rt_object 继承<br>struct rt_timer<br>{<br>    struct rt_object parent;                            &#x2F;**&lt; inherit from rt_object *&#x2F;</p>
+<pre><code>rt_list_t        row[RT_TIMER_SKIP_LIST_LEVEL];
+
+void (*timeout_func)(void *parameter);              /**&lt; timeout function   定时器超时调用的函数,在线程初始化时赋值为 rt_thread_timeout*/
+void            *parameter;                         /**&lt; timeout function&#39;s parameter   定时器超时调用，thread*/
+
+rt_tick_t        init_tick;                         /**&lt; timer timeout tick   定时器初始化节拍*/
+rt_tick_t        timeout_tick;                      /**&lt; timeout tick         定时器超时节拍*/
+</code></pre>
+<p>};<br>typedef struct rt_timer *rt_timer_t;</p>
+<p>这个函数很重要, 线程延时主要是靠这个函数实现, 他的作用是 将 线程按照 超时时间 的先后 挂在 时间链表 rt_timer_list 上面<br>rt_timer_check 函数会扫描  时间链表 rt_timer_list ,然后取出时间到的线程, </p>
+<p>rt_err_t rt_timer_start(rt_timer_t timer)<br>{<br>    unsigned int row_lvl;<br>    rt_list_t *timer_list;<br>    register rt_base_t level;<br>    rt_list_t *row_head[RT_TIMER_SKIP_LIST_LEVEL];  指针数据, 每个数组元素都是一个指针变量,每个数组元素都指向 rt_list_t *<br>    unsigned int tst_nr;<br>    static unsigned int random_nr;</p>
+<pre><code>/* timer check */
+RT_ASSERT(timer != RT_NULL);
+RT_ASSERT(rt_object_get_type(&amp;timer-&gt;parent) == RT_Object_Class_Timer);
+
+/* stop timer firstly */
+level = rt_hw_interrupt_disable();
+/* remove timer from list */
+_rt_timer_remove(timer);
+/* change status of timer */
+timer-&gt;parent.flag &amp;= ~RT_TIMER_FLAG_ACTIVATED;
+rt_hw_interrupt_enable(level);
+
+RT_OBJECT_HOOK_CALL(rt_object_take_hook, (&amp;(timer-&gt;parent)));
+
+/*
+ * get timeout tick,
+ * the max timeout tick shall not great than RT_TICK_MAX/2
+ */
+RT_ASSERT(timer-&gt;init_tick &lt; RT_TICK_MAX / 2);
+timer-&gt;timeout_tick = rt_tick_get() + timer-&gt;init_tick;   /*重置 超时时间*/
+
+/* disable interrupt */
+level = rt_hw_interrupt_disable();
+</code></pre>
+<p>#ifdef RT_USING_TIMER_SOFT<br>    if (timer-&gt;parent.flag &amp; RT_TIMER_FLAG_SOFT_TIMER)<br>    {<br>        &#x2F;* insert timer to soft timer list <em>&#x2F;<br>        timer_list &#x3D; rt_soft_timer_list;<br>    }<br>    else<br>#endif<br>    {<br>        &#x2F;</em> insert timer to system timer list *&#x2F;<br>        timer_list &#x3D; rt_timer_list;<br>    }</p>
+<p>  获取超时时间链表   rt_timer_list  首地址   重要!!!<br>    row_head[0]  &#x3D; &amp;timer_list[0];  row_head指针数据, 每个数组元素都是一个指针变量,每个数组元素都指向 rt_list_t * 类型的地址<br>    row_head[0] 初始值等于 rt_timer_list,  row_head[0] 会依次扫描 时间链表 rt_timer_list 中的节点，直到找到插入位置<br>    for (row_lvl &#x3D; 0; row_lvl &lt; RT_TIMER_SKIP_LIST_LEVEL; row_lvl++)<br>    {<br>        for (; row_head[row_lvl] !&#x3D; timer_list[row_lvl].prev;<br>             row_head[row_lvl]  &#x3D; row_head[row_lvl]-&gt;next)<br>        {<br>            struct rt_timer *t;<br>            rt_list_t *p &#x3D; row_head[row_lvl]-&gt;next;  获取 时间链表   row_head 后面第一个节点</p>
+<pre><code>        /* fix up the entry pointer */
+        根据 row 在 定时器rt_timer中的偏移得到 t 的首地址, 即链表p的首地址减去row字段的偏移，然后在去引用 定时器t 其他字段内容
+        t = rt_list_entry(p, struct rt_timer, row[row_lvl]);    
+
+        /* If we have two timers that timeout at the same time, it&#39;s
+         * preferred that the timer inserted early get called early.
+         * So insert the new timer to the end the the some-timeout timer
+         * list.
+         */
+        如果 需要插入的时间 timer-&gt;timeout_tick 与 链表中节点 p 的时间t-&gt;timeout_tick 相等，跳过,继续插入后面的节点, 遵循先来后到的原则
+        if ((t-&gt;timeout_tick - timer-&gt;timeout_tick) == 0)  
+        &#123;
+            continue;
+        &#125;
+        如果 需要插入的时间 timer-&gt;timeout_tick 比 链表中节点 p 的时间t-&gt;timeout_tick 小, 则退出for 循环,timer应该插入在节点p的前面
+        else if ((t-&gt;timeout_tick - timer-&gt;timeout_tick) &lt; RT_TICK_MAX / 2)
+        &#123;
+            break;
+        &#125;
+    &#125;
+    由于 RT_TIMER_SKIP_LIST_LEVEL 的值等于1 ,此条件不满足
+    if (row_lvl != RT_TIMER_SKIP_LIST_LEVEL - 1)
+        row_head[row_lvl + 1] = row_head[row_lvl] + 1;
+&#125;
+
+/* Interestingly, this super simple timer insert counter works very very
+ * well on distributing the list height uniformly. By means of &quot;very very
+ * well&quot;, I mean it beats the randomness of timer-&gt;timeout_tick very easily
+ * (actually, the timeout_tick is not random and easy to be attacked). */
+random_nr++;
+tst_nr = random_nr;
+
+将 时间 定时器 timer 插入在 节点 p 的前面 即 row_head的后面, row_head 此时指向 p
+rt_list_insert_after(row_head[RT_TIMER_SKIP_LIST_LEVEL - 1],
+                     &amp;(timer-&gt;row[RT_TIMER_SKIP_LIST_LEVEL - 1])); 由于RT_TIMER_SKIP_LIST_LEVEL==1, 
+                                                                   &amp;(timer-&gt;row[RT_TIMER_SKIP_LIST_LEVEL - 1]) 其实就等于timer-&gt;row的地址
+
+条件不满足 不会执行                   
+for (row_lvl = 2; row_lvl &lt;= RT_TIMER_SKIP_LIST_LEVEL; row_lvl++)
+&#123;
+    if (!(tst_nr &amp; RT_TIMER_SKIP_LIST_MASK))
+        rt_list_insert_after(row_head[RT_TIMER_SKIP_LIST_LEVEL - row_lvl],
+                             &amp;(timer-&gt;row[RT_TIMER_SKIP_LIST_LEVEL - row_lvl]));
+    else
+        break;
+    /* Shift over the bits we have tested. Works well with 1 bit and 2
+     * bits. */
+    tst_nr &gt;&gt;= (RT_TIMER_SKIP_LIST_MASK + 1) &gt;&gt; 1;
+&#125;
+
+timer-&gt;parent.flag |= RT_TIMER_FLAG_ACTIVATED;
+
+/* enable interrupt */
+rt_hw_interrupt_enable(level);
+</code></pre>
+<p>#ifdef RT_USING_TIMER_SOFT<br>    if (timer-&gt;parent.flag &amp; RT_TIMER_FLAG_SOFT_TIMER)<br>    {<br>        &#x2F;* check whether timer thread is ready <em>&#x2F;<br>        if ((timer_thread.stat &amp; RT_THREAD_STAT_MASK) &#x3D;&#x3D; RT_THREAD_SUSPEND)<br>        {<br>            &#x2F;</em> resume timer thread to check soft timer *&#x2F;<br>            rt_thread_resume(&amp;timer_thread);<br>            rt_schedule();<br>        }<br>    }<br>#endif</p>
+<pre><code>return RT_EOK;
+</code></pre>
+<p>}<br>RTM_EXPORT(rt_timer_start);</p>
+<p>周期性调用, 检查超时时间链表 rt_timer_list 上是否有时间到的项<br>void rt_timer_check(void)<br>{<br>    struct rt_timer *t;<br>    rt_tick_t current_tick;<br>    register rt_base_t level;</p>
+<pre><code>RT_DEBUG_LOG(RT_DEBUG_TIMER, (&quot;timer check enter\n&quot;));
+
+current_tick = rt_tick_get();  获取当前系统时间节拍
+
+/* disable interrupt */
+level = rt_hw_interrupt_disable();
+
+扫描 时间链表 rt_timer_list , 不为空的情况下
+while (!rt_list_isempty(&amp;rt_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1]))
+&#123;
+
+    排在 时间链表 rt_timer_list 前面的节点永远是最先超时的,取出 rt_timer_list 后面第一个节点判断是否超时,也就是时间到了
+    t = rt_list_entry(rt_timer_list[RT_TIMER_SKIP_LIST_LEVEL - 1].next,
+                      struct rt_timer, row[RT_TIMER_SKIP_LIST_LEVEL - 1]);
+
+    /*
+     * It supposes that the new tick shall less than the half duration of
+     * tick max.
+     */
+    判断定时器节点是否超时
+    if ((current_tick - t-&gt;timeout_tick) &lt; RT_TICK_MAX / 2)
+    &#123;
+        RT_OBJECT_HOOK_CALL(rt_timer_enter_hook, (t));
+
+        /* remove timer from timer list firstly */
+        从 链表 rt_timer_list 中移除,t 的后面一个节点会前移挂在 rt_timer_list后面,也就是 rt_timer_list 后面第一个节点
+        _rt_timer_remove(t);
+
+        /* call timeout function */
+        调用 超时函数   rt_thread_timeout ，参数是 thread
+        t-&gt;timeout_func(t-&gt;parameter);
+
+        /* re-get tick */
+        current_tick = rt_tick_get();
+
+        RT_OBJECT_HOOK_CALL(rt_timer_exit_hook, (t));
+        RT_DEBUG_LOG(RT_DEBUG_TIMER, (&quot;current tick: %d\n&quot;, current_tick));
+
+        if ((t-&gt;parent.flag &amp; RT_TIMER_FLAG_PERIODIC) &amp;&amp;
+            (t-&gt;parent.flag &amp; RT_TIMER_FLAG_ACTIVATED))
+        &#123;
+            /* start it */
+            如果是周期性的则  重新启动定时器
+            t-&gt;parent.flag &amp;= ~RT_TIMER_FLAG_ACTIVATED;
+            rt_timer_start(t);
+        &#125;
+        else
+        &#123;
+            /* stop timer */
+            不是周期性的定时器则关闭,不会再出现在  时间链表 rt_timer_list 上面
+            t-&gt;parent.flag &amp;= ~RT_TIMER_FLAG_ACTIVATED;
+        &#125;
+    &#125;
+    else
+        break;
+&#125;
+
+/* enable interrupt */
+rt_hw_interrupt_enable(level);
+
+RT_DEBUG_LOG(RT_DEBUG_TIMER, (&quot;timer check leave\n&quot;));
+</code></pre>
+<p>}</p>
+
       
     </div>
 
@@ -334,8 +747,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:57:10" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:10+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-22 21:57:10 / 修改时间：21:58:35" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:10+08:00">2022-05-22</time>
             </span>
 
           
@@ -349,7 +763,32 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <p>双向链表初始化<br>rt_inline void rt_list_init(rt_list_t *l)<br>{<br>    l-&gt;next &#x3D; l-&gt;prev &#x3D; l;  前后两个节点均初始化为链表起始地址<br>}</p>
+<p>双向链表插入在后面, 即接在后面<br>rt_inline void rt_list_insert_after(rt_list_t *l, rt_list_t *n)<br>{<br>    l 是被插入节点,在前    n是需要插入的节点,在后<br>    l-&gt;next-&gt;prev &#x3D; n;    将l 的下一个节点 连在 n上<br>    n-&gt;next &#x3D; l-&gt;next;    将 n 连在 l的下一个节点上</p>
+<pre><code>至此  l的 下一个节点已经和 n 连接好
+
+l-&gt;next = n;          将 l 和 n连接
+n-&gt;prev = l;          将 n 和 l连接
+</code></pre>
+<p>}</p>
+<p>双向链表插入在前面,即尾部<br>rt_inline void rt_list_insert_before(rt_list_t *l, rt_list_t *n)<br>{<br>    l 是被插入节点,在后    n是需要插入的节点,在前</p>
+<pre><code>l-&gt;prev-&gt;next = n;     将 l 的上一个节点和 n连接 , l的上一个节点即尾部
+n-&gt;prev = l-&gt;prev;     将 n 和l 的上一个节点连接 , l的上一个节点即尾部
+
+至此  l的 上一个节点已经和 n 连接好 ,l的上一个节点即尾部，现在 n是尾部了
+
+l-&gt;prev = n;           将 l 和 n连接    现在 n是尾部了
+n-&gt;next = l;           将 n 和 l连接    现在 n是尾部了
+</code></pre>
+<p>}</p>
+<p>双向链表移除,同时连接  前后两个节点<br>rt_inline void rt_list_remove(rt_list_t *n)<br>{</p>
+<pre><code>n-&gt;next-&gt;prev = n-&gt;prev;   将 n 的下一个节点 和 n 的上一个节点连接  
+n-&gt;prev-&gt;next = n-&gt;next;   将 n 的上一个节点 和 n 的下一个节点连接
+
+n-&gt;next = n-&gt;prev = n;     n 将彻底断开连接
+</code></pre>
+<p>}</p>
+
       
     </div>
 
@@ -393,8 +832,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:56:55" itemprop="dateCreated datePublished" datetime="2022-05-22T21:56:55+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-22 21:56:55 / 修改时间：21:58:23" itemprop="dateCreated datePublished" datetime="2022-05-22T21:56:55+08:00">2022-05-22</time>
             </span>
 
           
@@ -408,7 +848,150 @@
     <div class="post-body" itemprop="articleBody">
 
       
-          
+          <p>#include &lt;rtthread.h&gt;<br>#include &lt;rthw.h&gt;</p>
+<p>#ifdef RT_USING_SMP<br>rt_hw_spinlock_t _rt_critical_lock;<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<p>rt_list_t rt_thread_priority_table[RT_THREAD_PRIORITY_MAX];   &#x2F;<em>线程优先级链表, 所有的线程都会安装优先级大小挂在不同的表上面</em>&#x2F;<br>rt_uint32_t rt_thread_ready_priority_group;    &#x2F;<em>优先级就绪分组</em>&#x2F;<br>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>&#x2F;* Maximum priority level, 256 *&#x2F;<br>rt_uint8_t rt_thread_ready_table[32];<br>#endif</p>
+<p>#ifndef RT_USING_SMP<br>extern volatile rt_uint8_t rt_interrupt_nest;<br>static rt_int16_t rt_scheduler_lock_nest;<br>struct rt_thread *rt_current_thread;<br>rt_uint8_t rt_current_priority;<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<p>rt_list_t rt_thread_defunct;</p>
+<p>获取 最高优先级的线程<br>static struct rt_thread* _get_highest_priority_thread(rt_ubase_t *highest_prio)<br>{<br>    register struct rt_thread *highest_priority_thread;<br>    register rt_ubase_t highest_ready_priority;</p>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>    register rt_ubase_t number;</p>
+<pre><code>number = __rt_ffs(rt_thread_ready_priority_group) - 1;
+highest_ready_priority = (number &lt;&lt; 3) + __rt_ffs(rt_thread_ready_table[number]) - 1;
+</code></pre>
+<p>#else<br>    highest_ready_priority &#x3D; __rt_ffs(rt_thread_ready_priority_group) - 1;  &#x2F;<em>利用位图算法找到最高优先级的 线程,也就是数字最小的</em>&#x2F;<br>#endif</p>
+<pre><code>/* get highest ready priority thread */
+highest_priority_thread = rt_list_entry(rt_thread_priority_table[highest_ready_priority].next,
+                          struct rt_thread,
+                          tlist);   /*获取线程控制块的首地址*/
+
+*highest_prio = highest_ready_priority;  /*返回最高的优先级*/
+
+return highest_priority_thread;
+</code></pre>
+<p>}</p>
+<p>&#x2F;**</p>
+<ul>
+<li><p>@ingroup SystemInit</p>
+</li>
+<li><p>This function will startup scheduler. It will select one thread</p>
+</li>
+<li><p>with the highest priority level, then switch to it.<br> *&#x2F;<br>void rt_system_scheduler_start(void)<br>{<br> register struct rt_thread *to_thread;<br> rt_ubase_t highest_ready_priority;</p>
+<p> to_thread &#x3D; _get_highest_priority_thread(&amp;highest_ready_priority);</p>
+</li>
+</ul>
+<p>#ifdef RT_USING_SMP<br>    to_thread-&gt;oncpu &#x3D; rt_hw_cpu_id();<br>#else<br>    rt_current_thread &#x3D; to_thread;<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<pre><code>rt_schedule_remove_thread(to_thread);
+to_thread-&gt;stat = RT_THREAD_RUNNING;
+
+/* switch to new thread */
+</code></pre>
+<p>#ifdef RT_USING_SMP<br>    rt_hw_context_switch_to((rt_ubase_t)&amp;to_thread-&gt;sp, to_thread);<br>#else<br>    rt_hw_context_switch_to((rt_ubase_t)&amp;to_thread-&gt;sp);<br>#endif &#x2F;<em>RT_USING_SMP</em>&#x2F;</p>
+<pre><code>/* never come back */
+</code></pre>
+<p>}</p>
+<p>&#x2F;**</p>
+<ul>
+<li>@addtogroup Thread<br> *&#x2F;</li>
+</ul>
+<p>&#x2F;**@{*&#x2F;</p>
+<p>&#x2F;**</p>
+<ul>
+<li><p>This function will perform one schedule. It will select one thread</p>
+</li>
+<li><p>with the highest priority level, then switch to it.<br> *&#x2F;<br>void rt_schedule(void)<br>{<br> rt_base_t level;<br> struct rt_thread *to_thread;<br> struct rt_thread *from_thread;</p>
+<p> &#x2F;* disable interrupt *&#x2F;<br> level &#x3D; rt_hw_interrupt_disable();</p>
+<p> &#x2F;* check the scheduler is enabled or not <em>&#x2F;<br> if (rt_scheduler_lock_nest &#x3D;&#x3D; 0)   &#x2F;<em>调度没有上锁,即可以进行调度</em>&#x2F;<br> {<br> rt_ubase_t highest_ready_priority;<br><br> if (rt_thread_ready_priority_group !&#x3D; 0)   &#x2F;<em>有就绪的线程才能进行调度</em>&#x2F;<br> {<br>     &#x2F;</em> need_insert_from_thread: need to insert from_thread to ready queue <em>&#x2F;<br>     int need_insert_from_thread &#x3D; 0;<br><br>     to_thread &#x3D; _get_highest_priority_thread(&amp;highest_ready_priority);&#x2F;<em>获取优先级最高的线程控制块首地址</em>&#x2F;<br><br>     if ((rt_current_thread-&gt;stat &amp; RT_THREAD_STAT_MASK) &#x3D;&#x3D; RT_THREAD_RUNNING) &#x2F;<em>当前的线程是否在运行状态</em>&#x2F;<br>     {<br>         if (rt_current_thread-&gt;current_priority &lt; highest_ready_priority) &#x2F;*当前在运行的线程 优先级是否比 highest_ready_priority 高*&#x2F;<br>         {<br>             to_thread &#x3D; rt_current_thread;  &#x2F;*系统中优先级最高线程的依然是 rt_current_thread*&#x2F;<br>         }<br>         else<br>         {<br>             need_insert_from_thread &#x3D; 1;    &#x2F;*系统中优先级最高线程是to_thread, 需要插入*&#x2F;<br>         }<br>     }<br>     &#x2F;*to_thread 不等于 当前正在运行的线程 rt_current_thread, 说明需要调度,需要切换至高优先级线程to_thread *&#x2F;<br>     if (to_thread !&#x3D; rt_current_thread)<br>     {<br>         &#x2F;* if the destination thread is not the same as current thread *&#x2F;<br>         rt_current_priority &#x3D; (rt_uint8_t)highest_ready_priority;  &#x2F;*将最高优先级赋给 rt_current_priority*&#x2F;<br>         from_thread         &#x3D; rt_current_thread;   &#x2F;* 从 当前正在运行的线程 rt_current_thread 切换 *&#x2F;<br>         rt_current_thread   &#x3D; to_thread;           &#x2F;* 切换至 系统最高优先级线程to_thread *&#x2F;<br><br>         RT_OBJECT_HOOK_CALL(rt_scheduler_hook, (from_thread, to_thread));<br><br>         if (need_insert_from_thread)<br>         {<br>             &#x2F;*线程from_thread已不在线程就绪表中, 将 from_thread 线程 插入线程就绪表尾部,等待下次调度 *&#x2F;<br>             rt_schedule_insert_thread(from_thread);<br>         }<br>         &#x2F;*将 需要调度的线程 to_thread 从线程就绪表中移除,马上进入运行状态,不参与线程调度 *&#x2F;<br>         rt_schedule_remove_thread(to_thread);<br><br>         &#x2F;*将线程 to_thread 设置为运行状态*&#x2F;<br>         to_thread-&gt;stat &#x3D; RT_THREAD_RUNNING | (to_thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);<br><br>         &#x2F;</em> switch to new thread *&#x2F;<br>         RT_DEBUG_LOG(RT_DEBUG_SCHEDULER,<br>                 (“[%d]switch to priority#%d “<br>                  “thread:%.*s(sp:0x%08x), “<br>                  “from thread:%.*s(sp: 0x%08x)\n”,<br>                  rt_interrupt_nest, highest_ready_priority,<br>                  RT_NAME_MAX, to_thread-&gt;name, to_thread-&gt;sp,<br>                  RT_NAME_MAX, from_thread-&gt;name, from_thread-&gt;sp));</p>
+</li>
+</ul>
+<p>#ifdef RT_USING_OVERFLOW_CHECK<br>                _rt_scheduler_stack_check(to_thread);<br>#endif</p>
+<pre><code>            if (rt_interrupt_nest == 0)
+            &#123;
+                extern void rt_thread_handle_sig(rt_bool_t clean_state);
+                
+                /*从线程 from_thread 切换至 线程to_thread*/
+                rt_hw_context_switch((rt_ubase_t)&amp;from_thread-&gt;sp,
+                        (rt_ubase_t)&amp;to_thread-&gt;sp);
+</code></pre>
+<p>#ifdef RT_USING_SIGNALS<br>                    if (rt_current_thread-&gt;stat &amp; RT_THREAD_STAT_SIGNAL_PENDING)<br>                    {<br>                        extern void rt_thread_handle_sig(rt_bool_t clean_state);</p>
+<pre><code>                    rt_current_thread-&gt;stat &amp;= ~RT_THREAD_STAT_SIGNAL_PENDING;
+
+                    rt_hw_interrupt_enable(level);
+
+                    /* check signal status */
+                    rt_thread_handle_sig(RT_TRUE);
+                &#125;
+                else
+                &#123;
+                    rt_hw_interrupt_enable(level);
+                &#125;
+</code></pre>
+<p>#else<br>                    &#x2F;* enable interrupt *&#x2F;<br>                    rt_hw_interrupt_enable(level);<br>#endif<br>                    goto __exit;<br>                }<br>                else<br>                {<br>                    RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, (“switch in interrupt\n”));</p>
+<pre><code>                rt_hw_context_switch_interrupt((rt_ubase_t)&amp;from_thread-&gt;sp,
+                        (rt_ubase_t)&amp;to_thread-&gt;sp);
+            &#125;
+        &#125;
+        else
+        &#123;
+            rt_schedule_remove_thread(rt_current_thread);
+            rt_current_thread-&gt;stat = RT_THREAD_RUNNING | (rt_current_thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);
+        &#125;
+    &#125;
+&#125;
+
+/* enable interrupt */
+rt_hw_interrupt_enable(level);
+</code></pre>
+<p>__exit:<br>    return;<br>}</p>
+<p>线程插入<br>线程插入和移除主要是操作 线程控制块 rt_thread 中的 字段tlist,这是一个双向链表, 他可能挂在的地方有两个<br>1 是线程就绪链表 rt_thread_priority_table 中,此时线程是处于就绪态或者运行态<br>2 是 IPC 对象中, 即挂在 rt_ipc_object中的  suspend_thread 字段上, 此时线程处于挂起状态，IPC 对象被 信号量等内核对象继承<br>void rt_schedule_insert_thread(struct rt_thread *thread)<br>{<br>    register rt_base_t temp;</p>
+<pre><code>RT_ASSERT(thread != RT_NULL);
+
+/* disable interrupt */
+temp = rt_hw_interrupt_disable();
+
+/* it&#39;s current thread, it should be RUNNING thread */
+if (thread == rt_current_thread)
+&#123;
+    thread-&gt;stat = RT_THREAD_RUNNING | (thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);
+    goto __exit;
+&#125;
+
+/* READY thread, insert to ready queue */
+/*将线程 thread 状态设置为 就绪态*/
+thread-&gt;stat = RT_THREAD_READY | (thread-&gt;stat &amp; ~RT_THREAD_STAT_MASK);
+/* insert thread to ready list */
+/*将 线程 thread 插入到就绪链表 rt_thread_priority_table 尾部*/
+rt_list_insert_before(&amp;(rt_thread_priority_table[thread-&gt;current_priority]),
+                      &amp;(thread-&gt;tlist));
+
+RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, (&quot;insert thread[%.*s], the priority: %d\n&quot;,
+                                  RT_NAME_MAX, thread-&gt;name, thread-&gt;current_priority));
+
+/* set priority mask */
+</code></pre>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>    rt_thread_ready_table[thread-&gt;number] |&#x3D; thread-&gt;high_mask;<br>#endif<br>    rt_thread_ready_priority_group |&#x3D; thread-&gt;number_mask;</p>
+<p>__exit:<br>    &#x2F;* enable interrupt *&#x2F;<br>    rt_hw_interrupt_enable(temp);<br>}</p>
+<p>线程移除<br>线程插入和移除主要是操作 线程控制块 rt_thread 中的 字段tlist,这是一个双向链表, 他可能挂在的地方有两个<br>1 是线程就绪链表 rt_thread_priority_table 中,此时线程是处于就绪态或者运行态<br>2 是 IPC 对象中, 即挂在 rt_ipc_object中的  suspend_thread 字段上, 此时线程处于挂起状态，IPC 对象被 信号量等内核对象继承<br>void rt_schedule_remove_thread(struct rt_thread *thread)<br>{<br>    register rt_base_t level;</p>
+<pre><code>RT_ASSERT(thread != RT_NULL);
+
+/* disable interrupt */
+level = rt_hw_interrupt_disable();
+
+RT_DEBUG_LOG(RT_DEBUG_SCHEDULER, (&quot;remove thread[%.*s], the priority: %d\n&quot;,
+                                  RT_NAME_MAX, thread-&gt;name,
+                                  thread-&gt;current_priority));
+
+/* remove thread from ready list */
+/*将线程 thread 从 就绪链表 rt_thread_priority_table 中移除, 主要是将线程控制块 thread 的 链表 tlist从就绪表中移除,同时连接该链表上下的节点*/
+rt_list_remove(&amp;(thread-&gt;tlist));
+if (rt_list_isempty(&amp;(rt_thread_priority_table[thread-&gt;current_priority])))
+&#123;
+</code></pre>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>        rt_thread_ready_table[thread-&gt;number] &amp;&#x3D; ~thread-&gt;high_mask;<br>        if (rt_thread_ready_table[thread-&gt;number] &#x3D;&#x3D; 0)<br>        {<br>            rt_thread_ready_priority_group &amp;&#x3D; ~thread-&gt;number_mask;<br>        }<br>#else<br>        rt_thread_ready_priority_group &amp;&#x3D; ~thread-&gt;number_mask;<br>#endif<br>    }</p>
+<pre><code>/* enable interrupt */
+rt_hw_interrupt_enable(level);
+</code></pre>
+<p>}</p>
+
       
     </div>
 

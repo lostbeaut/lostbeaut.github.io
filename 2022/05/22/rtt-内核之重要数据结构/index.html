@@ -22,15 +22,15 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="适合自己的才是最好的">
+  <meta name="description" content="内核对象&#x2F;**   The object type can be one of the follows with specific macros enabled:  Thread    Semaphore    Mutex    Event    MailBox    MessageQueue    MemHeap    MemPool    Device    Timer    Mo">
 <meta property="og:type" content="article">
 <meta property="og:title" content="rtt 内核之重要数据结构">
 <meta property="og:url" content="http://example.com/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E9%87%8D%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="恋人心">
-<meta property="og:description" content="适合自己的才是最好的">
+<meta property="og:description" content="内核对象&#x2F;**   The object type can be one of the follows with specific macros enabled:  Thread    Semaphore    Mutex    Event    MailBox    MessageQueue    MemHeap    MemPool    Device    Timer    Mo">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2022-05-22T13:57:38.000Z">
-<meta property="article:modified_time" content="2022-05-22T13:57:38.920Z">
+<meta property="article:modified_time" content="2022-05-22T13:59:00.328Z">
 <meta property="article:author" content="恋人心">
 <meta name="twitter:card" content="summary">
 
@@ -218,8 +218,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:57:38" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:38+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-22 21:57:38 / 修改时间：21:59:00" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:38+08:00">2022-05-22</time>
             </span>
 
           
@@ -240,7 +241,202 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <ol>
+<li>内核对象<br>&#x2F;**</li>
+</ol>
+<ul>
+<li>The object type can be one of the follows with specific</li>
+<li>macros enabled:</li>
+<li><ul>
+<li>Thread</li>
+</ul>
+</li>
+<li><ul>
+<li>Semaphore</li>
+</ul>
+</li>
+<li><ul>
+<li>Mutex</li>
+</ul>
+</li>
+<li><ul>
+<li>Event</li>
+</ul>
+</li>
+<li><ul>
+<li>MailBox</li>
+</ul>
+</li>
+<li><ul>
+<li>MessageQueue</li>
+</ul>
+</li>
+<li><ul>
+<li>MemHeap</li>
+</ul>
+</li>
+<li><ul>
+<li>MemPool</li>
+</ul>
+</li>
+<li><ul>
+<li>Device</li>
+</ul>
+</li>
+<li><ul>
+<li>Timer</li>
+</ul>
+</li>
+<li><ul>
+<li>Module</li>
+</ul>
+</li>
+<li><ul>
+<li>Unknown</li>
+</ul>
+</li>
+<li><ul>
+<li>Static<br> <em>&#x2F;<br>enum rt_object_class_type<br>{<br>RT_Object_Class_Null   &#x3D; 0,                         &#x2F;<em>*&lt; The object is not used. *&#x2F;<br>RT_Object_Class_Thread,                             &#x2F;**&lt; The object is a thread.       线程</em>&#x2F;<br>RT_Object_Class_Semaphore,                          &#x2F;**&lt; The object is a semaphore.    信号量</em>&#x2F;<br>RT_Object_Class_Mutex,                              &#x2F;<em>*&lt; The object is a mutex.        互斥量 *&#x2F;<br>RT_Object_Class_Event,                              &#x2F;**&lt; The object is a event.        事件</em>&#x2F;<br>RT_Object_Class_MailBox,                            &#x2F;<em><em>&lt; The object is a mail box.     邮箱</em>&#x2F;<br>RT_Object_Class_MessageQueue,                       &#x2F;</em>*&lt; The object is a message queue.消息队列 *&#x2F;<br>RT_Object_Class_MemHeap,                            &#x2F;<strong>&lt; The object is a memory heap *&#x2F;<br>RT_Object_Class_MemPool,                            &#x2F;**&lt; The object is a memory pool. *&#x2F;<br>RT_Object_Class_Device,                             &#x2F;</strong>&lt; The object is a device *&#x2F;<br>RT_Object_Class_Timer,                              &#x2F;<strong>&lt; The object is a timer. *&#x2F;<br>RT_Object_Class_Module,                             &#x2F;**&lt; The object is a module. *&#x2F;<br>RT_Object_Class_Unknown,                            &#x2F;</strong>&lt; The object is unknown. *&#x2F;<br>RT_Object_Class_Static &#x3D; 0x80                       &#x2F;**&lt; The object is a static object. *&#x2F;<br>};</li>
+</ul>
+</li>
+</ul>
+<p>2 .双向链表 </p>
+<p>&#x2F;**</p>
+<ul>
+<li>Double List structure<br> *&#x2F;<br>struct rt_list_node<br>{<br> struct rt_list_node *next;                          &#x2F;<em>*&lt; point to next node. 前节点 *&#x2F;<br> struct rt_list_node <em>prev;                          &#x2F;**&lt; point to prev node. 后节点</em>&#x2F;<br>};<br>typedef struct rt_list_node rt_list_t;                  &#x2F;</em>*&lt; Type for lists. *&#x2F;</li>
+</ul>
+<ol start="3">
+<li>内核对象</li>
+</ol>
+<p>&#x2F;**</p>
+<ul>
+<li>Base structure of Kernel object<br> <em>&#x2F;<br>struct rt_object<br>{<br> char       name[RT_NAME_MAX];                       &#x2F;**&lt; name of kernel object  名字</em>&#x2F;<br> rt_uint8_t type;                                    &#x2F;<em><em>&lt; type of kernel object  内核对象类型</em>&#x2F;<br> rt_uint8_t flag;                                    &#x2F;</em><em>&lt; flag of kernel object  标志</em>&#x2F;</li>
+</ul>
+<p>#ifdef RT_USING_MODULE<br>    void      *module_id;                               &#x2F;<em>*&lt; id of application module *&#x2F;<br>#endif<br>    rt_list_t  list;                                    &#x2F;**&lt; list node of kernel object  双向链表 挂在 对象容器中</em>&#x2F;<br>};<br>typedef struct rt_object *rt_object_t;                  &#x2F;**&lt; Type for kernel objects. *&#x2F;</p>
+<p>4.对象容器结构</p>
+<p> &#x2F;**</p>
+<ul>
+<li>The information of the kernel object<br> *&#x2F;<br>struct rt_object_information<br>{<br> enum rt_object_class_type type;                     &#x2F;<strong>&lt; object class type *&#x2F;<br> rt_list_t                 object_list;              &#x2F;**&lt; object list *&#x2F;<br> rt_size_t                 object_size;              &#x2F;</strong>&lt; object size *&#x2F;<br>};</li>
+</ul>
+<ol start="5">
+<li>定时器</li>
+</ol>
+<p>  &#x2F;**</p>
+<ul>
+<li><p>timer structure<br> <em>&#x2F;<br>struct rt_timer                                         属于面向对象的思想,子承父类  struct rt_object 是父类<br>{<br> struct rt_object parent;                            &#x2F;**&lt; inherit from rt_object ， 从父类rt_object 继承</em>&#x2F;</p>
+<p> rt_list_t        row[RT_TIMER_SKIP_LIST_LEVEL];</p>
+<p> void (*timeout_func)(void <em>parameter);              &#x2F;**&lt; timeout function                超时函数</em>&#x2F;<br> void            <em>parameter;                         &#x2F;**&lt; timeout function’s parameter    超时函数参数</em>&#x2F;</p>
+<p> rt_tick_t        init_tick;                         &#x2F;<em><em>&lt; timer timeout tick              初始时间 系统节拍</em>&#x2F;<br> rt_tick_t        timeout_tick;                      &#x2F;</em><em>&lt; timeout tick                    超时时间 系统节拍</em>&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_timer *rt_timer_t;</p>
+<p>6 .线程控制块<br>struct rt_thread                                        属于面向对象的思想,子承父类  struct rt_object 是父类<br>{<br>    &#x2F;* rt object <em>&#x2F;<br>    char        name[RT_NAME_MAX];                      &#x2F;**&lt; the name of thread  头部跟 rt_object 是一样的 继承至 rt_object</em>&#x2F;<br>    rt_uint8_t  type;                                   &#x2F;<em><em>&lt; type of object      内核类型</em>&#x2F;<br>    rt_uint8_t  flags;                                  &#x2F;</em>*&lt; thread’s flags *&#x2F;</p>
+<p>#ifdef RT_USING_MODULE<br>    void       *module_id;                              &#x2F;**&lt; id of application module *&#x2F;<br>#endif</p>
+<pre><code>rt_list_t   list;                                   /**&lt; the object list     注册时插入对象容器中*/
+rt_list_t   tlist;                                  /**&lt; the thread list     插入在 信号量 线程就绪表等中*/
+
+/* stack point and entry */
+void       *sp;                                     /**&lt; stack point         堆栈指针*/
+void       *entry;                                  /**&lt; entry */
+void       *parameter;                              /**&lt; parameter */
+void       *stack_addr;                             /**&lt; stack address */
+rt_uint32_t stack_size;                             /**&lt; stack size */
+
+/* error code */
+rt_err_t    error;                                  /**&lt; error code */
+
+rt_uint8_t  stat;                                   /**&lt; thread status */
+
+/* priority */
+rt_uint8_t  current_priority;                       /**&lt; current priority */
+rt_uint8_t  init_priority;                          /**&lt; initialized priority */
+</code></pre>
+<p>#if RT_THREAD_PRIORITY_MAX &gt; 32<br>    rt_uint8_t  number;<br>    rt_uint8_t  high_mask;<br>#endif<br>    rt_uint32_t number_mask;</p>
+<p>#if defined(RT_USING_EVENT)<br>    &#x2F;* thread event *&#x2F;<br>    rt_uint32_t event_set;<br>    rt_uint8_t  event_info;<br>#endif</p>
+<p>#if defined(RT_USING_SIGNALS)<br>    rt_sigset_t     sig_pending;                        &#x2F;**&lt; the pending signals *&#x2F;<br>    rt_sigset_t     sig_mask;                           &#x2F;**&lt; the mask bits of signal *&#x2F;</p>
+<pre><code>void            *sig_ret;                           /**&lt; the return stack pointer from signal */
+rt_sighandler_t *sig_vectors;                       /**&lt; vectors of signal handler */
+void            *si_list;                           /**&lt; the signal infor list */
+</code></pre>
+<p>#endif</p>
+<pre><code>rt_ubase_t  init_tick;                              /**&lt; thread&#39;s initialized tick */
+rt_ubase_t  remaining_tick;                         /**&lt; remaining tick */
+
+struct rt_timer thread_timer;                       /**&lt; built-in thread timer */
+
+void (*cleanup)(struct rt_thread *tid);             /**&lt; cleanup function when thread exit */
+
+/* light weight process if present */
+</code></pre>
+<p>#ifdef RT_USING_LWP<br>    void        *lwp;<br>#endif</p>
+<pre><code>rt_uint32_t user_data;                             /**&lt; private user data beyond this thread */
+</code></pre>
+<p>};<br>typedef struct rt_thread *rt_thread_t;</p>
+<ol start="7">
+<li>IPC对象, 从 rt_object 继承, IPC主要用于 线程间通信</li>
+</ol>
+<p>&#x2F;**</p>
+<ul>
+<li><p>Base structure of IPC object<br> <em>&#x2F;<br>struct rt_ipc_object<br>{<br> &#x2F;<em>从父类 rt_object 继承</em>&#x2F;                           属于面向对象的思想,子承父类  struct rt_object 是父类<br> struct rt_object parent;                            &#x2F;**&lt; inherit from rt_object   从 rt_object 继承</em>&#x2F;</p>
+<p> rt_list_t        suspend_thread;                    &#x2F;**&lt; threads pended on this resource , 线程请求挂起时会挂在这里 *&#x2F;</p>
+</li>
+</ul>
+<p>};</p>
+<ol start="8">
+<li>信号量, 线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;**</li>
+</ol>
+<ul>
+<li><p>Semaphore structure<br> <em>&#x2F;<br>struct rt_semaphore<br>{<br> &#x2F;<em>从 父类rt_ipc_object 继承</em>&#x2F;                       属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object  从 rt_ipc_object 继承</em>&#x2F;</p>
+<p> rt_uint16_t          value;                         &#x2F;<em><em>&lt; value of semaphore.      初始值</em>&#x2F;<br> rt_uint16_t          reserved;                      &#x2F;</em>*&lt; reserved field *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_semaphore *rt_sem_t;</p>
+<ol start="9">
+<li>互斥量, 线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;**</li>
+</ol>
+<ul>
+<li><p>Mutual exclusion (mutex) structure<br> *&#x2F;<br>struct rt_mutex<br>{<br> &#x2F;<em>从 父类rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> rt_uint16_t          value;                         &#x2F;**&lt; value of mutex *&#x2F;</p>
+<p> rt_uint8_t           original_priority;             &#x2F;**&lt; priority of last thread hold the mutex *&#x2F;<br> rt_uint8_t           hold;                          &#x2F;**&lt; numbers of thread hold the mutex *&#x2F;</p>
+<p> struct rt_thread    *owner;                         &#x2F;**&lt; current owner of mutex *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_mutex *rt_mutex_t;</p>
+<ol start="10">
+<li>事件，线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;*</li>
+</ol>
+<ul>
+<li><p>event structure<br> *&#x2F;<br>struct rt_event<br>{<br> &#x2F;<em>从父类 rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> rt_uint32_t          set;                           &#x2F;**&lt; event set *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_event *rt_event_t;</p>
+<ol start="11">
+<li>邮箱，线程间通信的内核对象,从 rt_ipc_object 继承<br>&#x2F;**</li>
+</ol>
+<ul>
+<li><p>mailbox structure<br> *&#x2F;<br>struct rt_mailbox<br>{<br> &#x2F;<em>从父类 rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> rt_uint32_t         *msg_pool;                      &#x2F;**&lt; start address of message buffer *&#x2F;</p>
+<p> rt_uint16_t          size;                          &#x2F;**&lt; size of message pool *&#x2F;</p>
+<p> rt_uint16_t          entry;                         &#x2F;<strong>&lt; index of messages in msg_pool *&#x2F;<br> rt_uint16_t          in_offset;                     &#x2F;**&lt; input offset of the message buffer *&#x2F;<br> rt_uint16_t          out_offset;                    &#x2F;</strong>&lt; output offset of the message buffer *&#x2F;</p>
+<p> rt_list_t            suspend_sender_thread;         &#x2F;**&lt; sender thread suspended on this mailbox *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_mailbox *rt_mailbox_t;</p>
+<ol start="12">
+<li>消息队列，线程间通信的内核对象,从 rt_ipc_object 继承</li>
+</ol>
+<p>&#x2F;**</p>
+<ul>
+<li><p>message queue structure<br> *&#x2F;<br>struct rt_messagequeue<br>{<br> &#x2F;<em>从父类 rt_ipc_object 继承</em>&#x2F;                        属于面向对象的思想,子承父类  struct rt_ipc_object 是父类<br> struct rt_ipc_object parent;                        &#x2F;**&lt; inherit from ipc_object *&#x2F;</p>
+<p> void                *msg_pool;                      &#x2F;**&lt; start address of message queue *&#x2F;</p>
+<p> rt_uint16_t          msg_size;                      &#x2F;**&lt; message size of each message *&#x2F;<br> rt_uint16_t          max_msgs;                      &#x2F;**&lt; max number of messages *&#x2F;</p>
+<p> rt_uint16_t          entry;                         &#x2F;**&lt; index of messages in the queue *&#x2F;</p>
+<p> void                *msg_queue_head;                &#x2F;**&lt; list head *&#x2F;<br> void                *msg_queue_tail;                &#x2F;**&lt; list tail *&#x2F;<br> void                *msg_queue_free;                &#x2F;**&lt; pointer indicated the free node of queue *&#x2F;</p>
+</li>
+</ul>
+<p>};<br>typedef struct rt_messagequeue *rt_mq_t;</p>
+
     </div>
 
     
