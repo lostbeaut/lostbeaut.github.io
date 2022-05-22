@@ -22,19 +22,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="RTT学习笔记:  1.2、lwip RTT测量lwip RTT测量涉及rttest、rtseq、sa、sv变量，rttest为报文发送的时间，，rtseq为测量往返时间报文的序号，sa(rtt average estimator)、sv(rtt deviation estimator)为计算往返时间的变量。————————————————版权声明：本文为CSDN博主「arm7star」的原创文章">
+  <meta name="description" content="适合自己的才是最好的">
 <meta property="og:type" content="article">
-<meta property="og:title" content="lwip RTT测量">
-<meta property="og:url" content="http://example.com/2022/05/13/lwip-RTT%E6%B5%8B%E9%87%8F/index.html">
+<meta property="og:title" content="rtt 内核之重要数据结构">
+<meta property="og:url" content="http://example.com/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E9%87%8D%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="恋人心">
-<meta property="og:description" content="RTT学习笔记:  1.2、lwip RTT测量lwip RTT测量涉及rttest、rtseq、sa、sv变量，rttest为报文发送的时间，，rtseq为测量往返时间报文的序号，sa(rtt average estimator)、sv(rtt deviation estimator)为计算往返时间的变量。————————————————版权声明：本文为CSDN博主「arm7star」的原创文章">
+<meta property="og:description" content="适合自己的才是最好的">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-13T10:28:37.000Z">
-<meta property="article:modified_time" content="2022-05-22T13:46:08.131Z">
+<meta property="article:published_time" content="2022-05-22T13:57:38.000Z">
+<meta property="article:modified_time" content="2022-05-22T13:57:38.920Z">
 <meta property="article:author" content="恋人心">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2022/05/13/lwip-RTT%E6%B5%8B%E9%87%8F/">
+<link rel="canonical" href="http://example.com/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E9%87%8D%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
 
 <script id="page-configurations">
@@ -47,7 +47,7 @@
   };
 </script>
 
-  <title>lwip RTT测量 | 恋人心</title>
+  <title>rtt 内核之重要数据结构 | 恋人心</title>
   
 
 
@@ -196,7 +196,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/13/lwip-RTT%E6%B5%8B%E9%87%8F/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E9%87%8D%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -209,7 +209,7 @@
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          lwip RTT测量
+          rtt 内核之重要数据结构
         </h1>
 
         <div class="post-meta">
@@ -219,15 +219,8 @@
               </span>
               <span class="post-meta-item-text">发表于</span>
 
-              <time title="创建时间：2022-05-13 18:28:37" itemprop="dateCreated datePublished" datetime="2022-05-13T18:28:37+08:00">2022-05-13</time>
+              <time title="创建时间：2022-05-22 21:57:38" itemprop="dateCreated datePublished" datetime="2022-05-22T21:57:38+08:00">2022-05-22</time>
             </span>
-              <span class="post-meta-item">
-                <span class="post-meta-item-icon">
-                  <i class="far fa-calendar-check"></i>
-                </span>
-                <span class="post-meta-item-text">更新于</span>
-                <time title="修改时间：2022-05-22 21:46:08" itemprop="dateModified" datetime="2022-05-22T21:46:08+08:00">2022-05-22</time>
-              </span>
 
           
             <span class="post-meta-item" title="阅读次数" id="busuanzi_container_page_pv" style="display: none;">
@@ -247,65 +240,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>RTT学习笔记: </p>
-<p>1.2、lwip RTT测量<br>lwip RTT测量涉及rttest、rtseq、sa、sv变量，rttest为报文发送的时间，，rtseq为测量往返时间报文的序号，sa(rtt average estimator)、sv(rtt deviation estimator)为计算往返时间的变量。<br>————————————————<br>版权声明：本文为CSDN博主「arm7star」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/arm7star/article/details/117199104">https://blog.csdn.net/arm7star/article/details/117199104</a></p>
-<p>sa : 平均估计量<br>sv : 偏差估计量</p>
-<pre><code>                                Err = M-A                                        （1）
-                                A = A+ g* Err                                    （2）
-                                D =D + h *  (|Err|-D)                            （3）
-                                RTO = A+4*D                                      （4）
-    其中M表示某次测量的RTT的值，A表示测得的RTT的平均值，A值的更新如第二式所示，D值为RTT的估计的方差，其更新如第三式所示。二式和三式中g和h都为常数，一般g取1/8，h取1/4。这样取值是为了便于计算，从后面可以看出，通过简单的移位操作就可以完成上述计算了。RTO的计算如第四式所示，初始时，RTO取值为6，即3s，A值为0，D值为6。
-</code></pre>
-<p>公式推导:</p>
-<p>其中M表示某次测量的RTT的值，A表示测得的RTT的平均值，A值的更新如第二式所示，D值为RTT的估计的方差，其更新如第三式所示。二式和三式中g和h都为常数，一般g取1&#x2F;8，h取1&#x2F;4。这样取值是为了便于计算，从后面可以看出，通过简单的移位操作就可以完成上述计算了。RTO的计算第四式所示，初始时，RTO取值为6，即3s，A值为0，D值为6。</p>
-<p>现在我们将上面的四个表达式做简单的变化，就得到了LWIP中计算RTT的表达式：<br>————————————————<br>版权声明：本文为CSDN博主「weixin_40004057」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40004057/article/details/111966128">https://blog.csdn.net/weixin_40004057/article/details/111966128</a></p>
-<pre><code>    Err = M-A                     (1)    /* 测量值M - 平均值A = Err*/
-
-    A = A+ Err/8                  (2)
-
-    A = A+(M-A)/8                 (3)
-
-由(3)式两边同时 乘以8 可知:
-
-    8A = 8A +M-A                  (4)
-
-令sa = 8A, A=sa/8 =sa&gt;&gt;3
-
-    sa = sa + M -sa&gt;&gt;3            (5)
-
-
-    D =D + (|Err |-D)/4           (6)
-
-    D = D + (|M-A|-D)/4           (7)
-    
-由(3)式两边同时 乘以4 可知:
-
-   4D = 4D + (|M-A |-D)           (8)
-
-令sv =4D, D=sv/4=sv&gt;&gt;2
-
-   sv = sv + (|M-sa&gt;&gt;3|-sv&gt;&gt;2)    (9)
-
-   RTO = A+4D                     (10) 
-
-   RTO = sa&gt;&gt;3 + sv               (11)
-</code></pre>
-<p>  相关字段解释: </p>
-<pre><code>rtime     /*用于重传定时器的计数，当其值为-1时表示计数器未被使能；当值为非0时表示计数器使能，在这种情况下，rtime的值每500ms被内核加1，
-          当rtime超过rto的值时，在unacked队列上的所有数据段将被重传*/
-rttest    /*设置为tcp_ticks, 即调用 tcp_output_segment 函数发送报文时, 设置 起始时间  pcb-&gt;rttest = tcp_ticks;*/
-
-rtseq     /*记录要进行RTT估计的数据段的起始数据编号,调用 tcp_output_segment 函数发送报文时 设置 pcb-&gt;rtseq = lwip_ntohl(seg-&gt;tcphdr-&gt;seqno);*/
-
-rto       /* 为数据包所设置的超时重传时间 */
-
-sa        /*平均估计量, 计算 rto */
-
-sv        /*偏差估计量, 计算 rto */
-
-nrtx     /*重传次数 rto值以2的指数倍退让*/
-</code></pre>
-
+        
     </div>
 
     
@@ -350,7 +285,7 @@ nrtx     /*重传次数 rto值以2的指数倍退让*/
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://example.com/2022/05/13/lwip-RTT%E6%B5%8B%E9%87%8F/" title="lwip RTT测量">http://example.com/2022/05/13/lwip-RTT测量/</a>
+    <a href="http://example.com/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E9%87%8D%E8%A6%81%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="rtt 内核之重要数据结构">http://example.com/2022/05/22/rtt-内核之重要数据结构/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -386,13 +321,10 @@ nrtx     /*重传次数 rto值以2的指数倍退让*/
         
     <div class="post-nav">
       <div class="post-nav-item">
-    <a href="/2022/05/12/hexo-next-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%AC%94%E8%AE%B0/" rel="prev" title="hexo + next 搭建个人博客笔记">
-      <i class="fa fa-chevron-left"></i> hexo + next 搭建个人博客笔记
+    <a href="/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E9%87%8D%E8%A6%81%E6%97%B6%E9%97%B4%E9%93%BE%E8%A1%A8/" rel="prev" title="rtt 内核之重要时间链表">
+      <i class="fa fa-chevron-left"></i> rtt 内核之重要时间链表
     </a></div>
-      <div class="post-nav-item">
-    <a href="/2022/05/22/rtt-%E5%86%85%E6%A0%B8%E4%B9%8B%E8%B0%83%E5%BA%A6%E7%9B%B8%E5%85%B3%E5%87%BD%E6%95%B0%E8%A7%A3%E6%9E%90/" rel="next" title="rtt 内核之调度相关函数解析">
-      rtt 内核之调度相关函数解析 <i class="fa fa-chevron-right"></i>
-    </a></div>
+      <div class="post-nav-item"></div>
     </div>
       </footer>
     
