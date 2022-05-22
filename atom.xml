@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<feed xmlns="http://www.w3.org/2005/Atom">
+  <title>恋人心</title>
+  
+  
+  <link href="http://example.com/atom.xml" rel="self"/>
+  
+  <link href="http://example.com/"/>
+  <updated>2022-05-13T12:13:12.376Z</updated>
+  <id>http://example.com/</id>
+  
+  <author>
+    <name>恋人心</name>
+    
+  </author>
+  
+  <generator uri="https://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>lwip RTT测量</title>
+    <link href="http://example.com/2022/05/13/lwip-RTT%E6%B5%8B%E9%87%8F/"/>
+    <id>http://example.com/2022/05/13/lwip-RTT%E6%B5%8B%E9%87%8F/</id>
+    <published>2022-05-13T10:28:37.000Z</published>
+    <updated>2022-05-13T12:13:12.376Z</updated>
+    
+    <content type="html"><![CDATA[<p>RTT学习笔记:</p><p>1.2、lwip RTT测量<br>lwip RTT测量涉及rttest、rtseq、sa、sv变量，rttest为报文发送的时间，，rtseq为测量往返时间报文的序号，sa(rtt average estimator)、sv(rtt deviation estimator)为计算往返时间的变量。<br>————————————————<br>版权声明：本文为CSDN博主「arm7star」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/arm7star/article/details/117199104">https://blog.csdn.net/arm7star/article/details/117199104</a></p><p>sa : 平均估计量<br>sv : 偏差估计量</p><pre><code>                                Err = M-A                                        （1）                                A = A+ g* Err                                    （2）                                D =D + h *  (|Err|-D)                            （3）                                RTO = A+4*D                                      （4）    其中M表示某次测量的RTT的值，A表示测得的RTT的平均值，A值的更新如第二式所示，D值为RTT的估计的方差，其更新如第三式所示。二式和三式中g和h都为常数，一般g取1/8，h取1/4。这样取值是为了便于计算，从后面可以看出，通过简单的移位操作就可以完成上述计算了。RTO的计算如第四式所示，初始时，RTO取值为6，即3s，A值为0，D值为6。</code></pre><p>公式推导:</p><p>其中M表示某次测量的RTT的值，A表示测得的RTT的平均值，A值的更新如第二式所示，D值为RTT的估计的方差，其更新如第三式所示。二式和三式中g和h都为常数，一般g取1&#x2F;8，h取1&#x2F;4。这样取值是为了便于计算，从后面可以看出，通过简单的移位操作就可以完成上述计算了。RTO的计算第四式所示，初始时，RTO取值为6，即3s，A值为0，D值为6。</p><p>现在我们将上面的四个表达式做简单的变化，就得到了LWIP中计算RTT的表达式：<br>————————————————<br>版权声明：本文为CSDN博主「weixin_40004057」的原创文章，遵循CC 4.0 BY-SA版权协议，转载请附上原文出处链接及本声明。<br>原文链接：<a href="https://blog.csdn.net/weixin_40004057/article/details/111966128">https://blog.csdn.net/weixin_40004057/article/details/111966128</a></p><pre><code>    Err = M-A                     (1)    /* 测量值M - 平均值A = Err*/    A = A+ Err/8                  (2)    A = A+(M-A)/8                 (3)由(3)式两边同时 乘以8 可知:    8A = 8A +M-A                  (4)令sa = 8A, A=sa/8 =sa&gt;&gt;3    sa = sa + M -sa&gt;&gt;3            (5)    D =D + (|Err |-D)/4           (6)    D = D + (|M-A|-D)/4           (7)    由(3)式两边同时 乘以4 可知:   4D = 4D + (|M-A |-D)           (8)令sv =4D, D=sv/4=sv&gt;&gt;2   sv = sv + (|M-sa&gt;&gt;3|-sv&gt;&gt;2)    (9)   RTO = A+4D                     (10)    RTO = sa&gt;&gt;3 + sv               (11)</code></pre><p>  相关字段解释: </p><pre><code>rtime     /*用于重传定时器的计数，当其值为-1时表示计数器未被使能；当值为非0时表示计数器使能，在这种情况下，rtime的值每500ms被内核加1，          当rtime超过rto的值时，在unacked队列上的所有数据段将被重传*/rttest    /*设置为tcp_ticks, 即调用 tcp_output_segment 函数发送报文时, 设置 起始时间  pcb-&gt;rttest = tcp_ticks;*/rtseq     /*记录要进行RTT估计的数据段的起始数据编号,调用 tcp_output_segment 函数发送报文时 设置 pcb-&gt;rtseq = lwip_ntohl(seg-&gt;tcphdr-&gt;seqno);*/rto       /* 为数据包所设置的超时重传时间 */sa        /*平均估计量, 计算 rto */sv        /*偏差估计量, 计算 rto */nrtx     /*重传次数 rto值以2的指数倍退让*/</code></pre>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;RTT学习笔记:&lt;/p&gt;
+&lt;p&gt;1.2、lwip RTT测量&lt;br&gt;lwip RTT测量涉及rttest、rtseq、sa、sv变量，rttest为报文发送的时间，，rtseq为测量往返时间报文的序号，sa(rtt average estimator)、sv(rtt dev</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>hexo + next 搭建个人博客笔记</title>
+    <link href="http://example.com/2022/05/12/hexo-next-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%AC%94%E8%AE%B0/"/>
+    <id>http://example.com/2022/05/12/hexo-next-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%AC%94%E8%AE%B0/</id>
+    <published>2022-05-12T12:00:12.000Z</published>
+    <updated>2022-05-14T03:45:13.898Z</updated>
+    
+    <content type="html"><![CDATA[<ol><li><p>修改代码区主题</p><p>   站点_config.yml<br>   highlight:<br>   enable: true<br>   line_number: true<br>   auto_detect: true<br>   tab_replace:<br>  文字自动检测默认不启动，所以改成true使其起作用</p><p>  主题_config.yml<br>  highlight_theme: normal<br>  normal<br>  night<br>  night eighties<br>  night blue<br>  night bright</p></li><li><p>D:\Program Files\Blog\themes\next\source\css_custom\styles.styl<br>.footer-inner {color: #ffb6c1;}  &#x2F;&#x2F;改变页脚字体颜色</p><p>&#x2F;&#x2F; Custom styles.<br> code {<br> color: #ff7600;<br> background: #fbf7f8;<br> margin: 2px;<br> color: #228B22 !important;  &#x2F;&#x2F;设置代码颜色<br> }</p></li><li><p>链接   博客写作攻略–Hexo+Github+Netlify+CMS<br>   <a href="https://zhuanlan.zhihu.com/p/77651304">https://zhuanlan.zhihu.com/p/77651304</a><br><br>   Netlify搭建个人博客设置域名<br>   <a href="https://blog.csdn.net/mqdxiaoxiao/article/details/96365253">https://blog.csdn.net/mqdxiaoxiao/article/details/96365253</a><br><br>   修改 hexo-theme-next 主题的样式（统一网站颜色）<br>   <a href="https://www.jianshu.com/p/2a8d399f1266">https://www.jianshu.com/p/2a8d399f1266</a><br><br>   Hexo NexT 主题美化记录<br>   <a href="https://www.jianshu.com/p/64caf29fdd0c">https://www.jianshu.com/p/64caf29fdd0c</a><br><br>   hexo+next个性化配置<br>   <a href="https://zhuanlan.zhihu.com/p/129644138">https://zhuanlan.zhihu.com/p/129644138</a><br><br>   给hexo主题添加背景及更改字体颜色（next的Mist主题）<br>   <a href="https://blog.csdn.net/weixin_40837922/article/details/88047241">https://blog.csdn.net/weixin_40837922/article/details/88047241</a><br><br>   Netlify 官网<br>   <a href="https://app.netlify.com/">https://app.netlify.com/</a><br><br>   Hexo博客开发之——Github绑定Netlify改动代码后自动部署<br>   <a href="https://blog.csdn.net/Calvin_zhou/article/details/109447074">https://blog.csdn.net/Calvin_zhou/article/details/109447074</a><br><br>   Hexo NexT主题自定义背景图片<br>   <a href="https://blog.csdn.net/qq_52116176/article/details/109406842">https://blog.csdn.net/qq_52116176/article/details/109406842</a></p></li></ol>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;ol&gt;
+&lt;li&gt;&lt;p&gt;修改代码区主题&lt;/p&gt;
+&lt;p&gt;   站点_config.yml&lt;br&gt;   highlight:&lt;br&gt;   enable: true&lt;br&gt;   line_number: true&lt;br&gt;   auto_detect: true&lt;br&gt;   tab_re</summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+  <entry>
+    <title>TCP中的数据结构</title>
+    <link href="http://example.com/2022/05/12/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/"/>
+    <id>http://example.com/2022/05/12/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/</id>
+    <published>2022-05-12T10:39:14.000Z</published>
+    <updated>2022-05-12T12:10:05.431Z</updated>
+    
+    <content type="html"><![CDATA[<p>前言:  这是我最近学习Lwip 整理的TCP相关的数据结构, 与大家分享</p><p>一。TCP_PCB 结构<br>      &#x2F;*与其他协议一样，为了描述 TCP 协议， LwIP 定义了一个名字叫 tcp_pcb 的结构体，我们称之为<br>      TCP 控制块，其内定义了大量的成员变量，基本定义了整个 TCP 协议运作过程的所有需要的东<br>      西，如发送窗口、接收窗口、数据缓冲区。超时处理、拥塞控制、滑动窗口等等，具体见代码清<br>      单 13_3。<br>      代码清单 13‑3 TCP 控制块<br>      <em>&#x2F;<br>      #define IP_PCB <br>      &#x2F;</em> 本地 ip 地址与远端 IP 地址 <em>&#x2F; <br>      ip_addr_t local_ip; <br>      ip_addr_t remote_ip; <br>      &#x2F;</em> 绑定 netif 索引 <em>&#x2F; <br>      u8_t netif_idx; <br>      &#x2F;</em> 套接字选项 <em>&#x2F; <br>      u8_t so_options; <br>      &#x2F;</em> 服务类型 <em>&#x2F; <br>      u8_t tos; <br>      &#x2F;</em> 生存时间 <em>&#x2F; <br>      u8_t ttl <br>      &#x2F;</em> 链路层地址解析提示 *&#x2F; <br>      IP_PCB_NETIFHINT<br>      #define TCP_PCB_COMMON(type) <br>      type <em>next; &#x2F;</em> 指向链表中的下一个控制块 *&#x2F; <br>      void <em>callback_arg; <br>      TCP_PCB_EXTARGS <br>      enum tcp_state state; &#x2F;</em> TCP 状态 *&#x2F; \</p><pre><code>  u8_t prio; \  /* 本地主机端口号 */ \  u16_t local_port  /** TCP 协议控制块 */  struct tcp_pcb  &#123;  IP_PCB;  /** 协议特定的 PCB 成员 */  TCP_PCB_COMMON(struct tcp_pcb);  /* 远端端口号 */  u16_t remote_port;  tcpflags_t flags;  #define TF_ACK_DELAY 0x01U /* 延迟发送 ACK */  #define TF_ACK_NOW 0x02U /* 立即发送 ACK. */  #define TF_INFR 0x04U /* 在快速恢复。 */  #define TF_CLOSEPEND 0x08U /* 关闭挂起 */  #define TF_RXCLOSED 0x10U /* rx 由 tcp_shutdown 关闭 */  #define TF_FIN 0x20U /* 连接在本地关闭 */  #define TF_NODELAY 0x40U /* 禁用 Nagle 算法 */  #define TF_NAGLEMEMERR 0x80U /* 本地缓冲区溢出 */  #define TF_TIMESTAMP 0x0400U /* Timestamp option enabled */  #endif  #define TF_RTO 0x0800U /* RTO 计时器 */  u8_t polltmr, pollinterval;  u8_t last_timer;  /* 控制块被最后一次处理的时间 */  u32_t tmr;     /* 该字段记录该PCB被创建的时刻 */    /* 接收窗口相关的字段 */  u32_t rcv_nxt; /* 下一个期望收到的序号 */  tcpwnd_size_t rcv_wnd; /* 接收窗口大小 */  tcpwnd_size_t rcv_ann_wnd; /* 告诉对方窗口的大小 */  u32_t rcv_ann_right_edge; /* 窗口的右边缘 */  /* 重传计时器。 */  s16_t rtime;    /*重传定时，该值随时间增加，当大于rto的值时则重传发生*/  u16_t mss;  /* 最大报文段大小 1460 , MSS是TCP报文段中的数据字段的最大长度  MSS=TCP报文段长度-TCP首部长度*/  /* RTT（往返时间）估计变量 */  u32_t rttest; /* RTT 估计，以为 500 毫秒递增 */  u32_t rtseq; /* 用于测试 RTT 的报文段序号 */  s16_t sa, sv; /* RTT 估计得到的平均值与时间差 */  s16_t rto; /* 重传超时 */  u8_t nrtx; /* 重传次数 */  /* 快速重传/恢复 */  u8_t dupacks;  u32_t lastack; /* 接收到的最大确认序号 */  /* 拥塞避免/控制变量 */  tcpwnd_size_t cwnd; /* 连接当前的窗口大小, 拥塞窗口 */  tcpwnd_size_t ssthresh; /* 拥塞避免算法启动的阈值, 拥塞慢开始门限 */  u32_t rto_end;  u32_t snd_nxt; /* 下一个要发送的序号 , 从以太网链路层发出*/  u32_t snd_wl1, snd_wl2; /* 上一次收到的序号和确认号 */  u32_t snd_lbb; /* 要缓冲的下一个字节的序列号 ,缓存至pcb-&gt;unsent中*/  tcpwnd_size_t snd_wnd; /* 发送窗口大小 */  tcpwnd_size_t snd_wnd_max; /* 对方的最大发送方窗口 */  /* 可用的缓冲区空间（以字节为单位）。 */  tcpwnd_size_t snd_buf;  tcpwnd_size_t bytes_acked;  struct tcp_seg *unsent; /* 未发送的报文段 */  struct tcp_seg *unacked; /* 已发送但未收到确认的报文段 */  struct tcp_seg *ooseq; /* 已收到的无序报文 */  /* 以前收到但未被上层处理的数据 */  struct pbuf *refused_data;  #if LWIP_CALLBACK_API || TCP_LISTEN_BACKLOG  struct tcp_pcb_listen* listener;  #endif  //TCP 协议相关的回调函数  #if LWIP_CALLBACK_API  /* 当数据发送成功后被调用 */  tcp_sent_fn sent;  /* 接收数据完成后被调用 */  tcp_recv_fn recv;  /* 建立连接后被调用 */  tcp_connected_fn connected;  /* 该函数被内核周期调用 */  tcp_poll_fn poll;  /* 发送错误时候被调用 */  tcp_err_fn errf;  /* 保持活性 */  u32_t keep_idle;  /* 坚持计时器计数器值 */  u8_t persist_cnt;               /*(persist_cnt ++) ==(persist_backoff)*/  u8_t persist_backoff;           /*坚持定时器关闭与打开*/  u8_t persist_probe;             /*TCP 零窗口探测次数*/  /* 保持活性报文发送次数 */  u8_t keep_cnt_sent;  &#125;;  1. /*persist_probe 在 tcp_zero_window_probe(struct tcp_pcb *pcb) 中自增 */  报文结构:    eth_hdr(14)     ip_hdr(20)       tcp_hdr(20)        APP应用层数据域    以太网帧     +    IP头      +     TCP 头        +   最大数据长度      14              20              20                1460</code></pre><p>二。PBUF 结构     &#x2F;<em>专为以太网报文设计</em>&#x2F;<br>    &#x2F;** Main packet buffer struct <em>&#x2F;<br>    struct pbuf {<br>      &#x2F;</em>* next pbuf in singly linked pbuf chain *&#x2F;<br>      struct pbuf *next;</p><pre><code>  /** pointer to the actual data in the buffer */  void *payload;                                                     /*  指向数据域  */  /**   * total length of this buffer and all next buffers in chain   * belonging to the same packet.   *   * For non-queue packet chains this is the invariant:   * p-&gt;tot_len == p-&gt;len + (p-&gt;next? p-&gt;next-&gt;tot_len: 0)   */  u16_t tot_len;  /** length of this buffer */  u16_t len;                                                         /*  payload  所指向的数据域长度  */  /** a bit field indicating pbuf type and allocation sources      (see PBUF_TYPE_FLAG_*, PBUF_ALLOC_FLAG_* and PBUF_TYPE_ALLOC_SRC_MASK)    */  u8_t type_internal;                                               /*  PBUF_REF  PBUF_ROM  PBUF_POOL  PBUF_RAM */  /** misc flags */  u8_t flags;  /**   * the reference count always equals the number of pointers   * that refer to this pbuf. This can be pointers from an application,   * the stack itself, or pbuf-&gt;next pointers from a chain.   */  LWIP_PBUF_REF_T ref;  /** For incoming packets, this contains the input netif&#39;s index */  u8_t if_idx;&#125;;struct pbuf *p =  (struct pbuf *)mem_malloc(alloc_len);p所指向的内存包括三部分  --&gt;&gt;                                (1)  sizeof(struct pbuf)                                               +                                (2)  offset( (以太网头 14 byte) + (IP 头 20byte) + (TCP 头 20 byte) )  +                              (3)  应用层数据部分, 也就是 payload字段指向的内存p-&gt;payload = LWIP_MEM_ALIGN((void *)((u8_t *)p + sizeof(struct pbuf) + offset)p-&gt;len = payload字段指向的内存， 即数据域长度p-&gt;tot_len = 数据域总长度#define PBUF_LINK_ENCAPSULATION_HLEN    0#define PBUF_LINK_HLEN                  16    链路层    eth_hdr(14)#define PBUF_IP_HLEN                    20    IP 层     ip_hdr(20)#define PBUF_TRANSPORT_HLEN             20    TCP 层    tcp_hdr(20)typedef enum &#123;  /** Includes spare room for transport layer header, e.g. UDP header.   * Use this if you intend to pass the pbuf to functions like udp_send().   */  PBUF_TRANSPORT = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN + PBUF_TRANSPORT_HLEN,  /** Includes spare room for IP header.   * Use this if you intend to pass the pbuf to functions like raw_send().   */  PBUF_IP = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN,  /** Includes spare room for link layer header (ethernet header).   * Use this if you intend to pass the pbuf to functions like ethernet_output().   * @see PBUF_LINK_HLEN   */  PBUF_LINK = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN,  /** Includes spare room for additional encapsulation header before ethernet   * headers (e.g. 802.11).   * Use this if you intend to pass the pbuf to functions like netif-&gt;linkoutput().   * @see PBUF_LINK_ENCAPSULATION_HLEN   */  PBUF_RAW_TX = PBUF_LINK_ENCAPSULATION_HLEN,  /** Use this for input packets in a netif driver when calling netif-&gt;input()   * in the most common case - ethernet-layer netif driver. */  PBUF_RAW = 0                                                                      /* 此pbuf 只有数据,没有报头  sizeof(struct pbuf) + 报文数据*/&#125; pbuf_layer;    这个结构就是  payload字段前的 offset 偏移</code></pre><p>三。TCP_SEG 结构</p><pre><code>/* This structure represents a TCP segment on the unsent, unacked and ooseq queues */struct tcp_seg &#123;  struct tcp_seg *next;    /* used when putting segments on a queue */  struct pbuf *p;          /* buffer containing data + TCP header */     指向 struct pbuf * 整个报文段 , 以太网最大报文段长度1516, payload指向TCP报文首部  u16_t len;               /* the TCP length of this segment */          应用层数据长度, 不包括  eth_hdr(14) + ip_hdr(20) + tcp_hdr(20)，最大1460#if TCP_OVERSIZE_DBGCHECK  u16_t oversize_left;     /* Extra bytes available at the end of the last                              pbuf in unsent (used for asserting vs.                              tcp_pcb.unsent_oversize only) */#endif /* TCP_OVERSIZE_DBGCHECK */#if TCP_CHECKSUM_ON_COPY  u16_t chksum;  u8_t  chksum_swapped;#endif /* TCP_CHECKSUM_ON_COPY */  u8_t  flags;#define TF_SEG_OPTS_MSS         (u8_t)0x01U /* Include MSS option (only used in SYN segments) */#define TF_SEG_OPTS_TS          (u8_t)0x02U /* Include timestamp option. */#define TF_SEG_DATA_CHECKSUMMED (u8_t)0x04U /* ALL data (not the header) is                                              checksummed into &#39;chksum&#39; */#define TF_SEG_OPTS_WND_SCALE   (u8_t)0x08U /* Include WND SCALE option (only used in SYN segments) */#define TF_SEG_OPTS_SACK_PERM   (u8_t)0x10U /* Include SACK Permitted option (only used in SYN segments) */  struct tcp_hdr *tcphdr;  /* the TCP header */                      指向   tcp_hdr 头, TCP 头部&#125;;四.struct tcp_hdr &#123;  PACK_STRUCT_FIELD(u16_t src);  PACK_STRUCT_FIELD(u16_t dest);  PACK_STRUCT_FIELD(u32_t seqno);  PACK_STRUCT_FIELD(u32_t ackno);  PACK_STRUCT_FIELD(u16_t _hdrlen_rsvd_flags);  PACK_STRUCT_FIELD(u16_t wnd);  PACK_STRUCT_FIELD(u16_t chksum);  PACK_STRUCT_FIELD(u16_t urgp);&#125; PACK_STRUCT_STRUCT; </code></pre>]]></content>
+    
+    
+      
+      
+    <summary type="html">&lt;p&gt;前言:  这是我最近学习Lwip 整理的TCP相关的数据结构, 与大家分享&lt;/p&gt;
+&lt;p&gt;一。TCP_PCB 结构&lt;br&gt;      &amp;#x2F;*与其他协议一样，为了描述 TCP 协议， LwIP 定义了一个名字叫 tcp_pcb 的结构体，我们称之为&lt;br&gt;      </summary>
+      
+    
+    
+    
+    
+  </entry>
+  
+</feed>
