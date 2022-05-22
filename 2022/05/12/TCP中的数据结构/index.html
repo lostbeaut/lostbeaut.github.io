@@ -22,19 +22,19 @@
     var CONFIG = {"hostname":"example.com","root":"/","scheme":"Gemini","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
   </script>
 
-  <meta name="description" content="适合自己的才是最好的">
+  <meta name="description" content="前言:  这是我最近学习Lwip 整理的TCP相关的数据结构, 与大家分享 一。TCP_PCB 结构      &#x2F;*与其他协议一样，为了描述 TCP 协议， LwIP 定义了一个名字叫 tcp_pcb 的结构体，我们称之为      TCP 控制块，其内定义了大量的成员变量，基本定义了整个 TCP 协议运作过程的所有需要的东      西，如发送窗口、接收窗口、数据缓冲区。超时处理、拥塞">
 <meta property="og:type" content="article">
 <meta property="og:title" content="TCP中的数据结构">
-<meta property="og:url" content="http://example.com/2022/05/22/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
+<meta property="og:url" content="http://example.com/2022/05/12/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/index.html">
 <meta property="og:site_name" content="恋人心">
-<meta property="og:description" content="适合自己的才是最好的">
+<meta property="og:description" content="前言:  这是我最近学习Lwip 整理的TCP相关的数据结构, 与大家分享 一。TCP_PCB 结构      &#x2F;*与其他协议一样，为了描述 TCP 协议， LwIP 定义了一个名字叫 tcp_pcb 的结构体，我们称之为      TCP 控制块，其内定义了大量的成员变量，基本定义了整个 TCP 协议运作过程的所有需要的东      西，如发送窗口、接收窗口、数据缓冲区。超时处理、拥塞">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2022-05-22T13:24:05.000Z">
-<meta property="article:modified_time" content="2022-05-22T13:24:05.778Z">
+<meta property="article:published_time" content="2022-05-12T10:39:14.000Z">
+<meta property="article:modified_time" content="2022-05-12T12:10:05.431Z">
 <meta property="article:author" content="恋人心">
 <meta name="twitter:card" content="summary">
 
-<link rel="canonical" href="http://example.com/2022/05/22/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+<link rel="canonical" href="http://example.com/2022/05/12/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
 
 <script id="page-configurations">
@@ -167,7 +167,7 @@
   
   
   <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/22/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2022/05/12/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/avatar.jpg">
@@ -189,8 +189,9 @@
                 <i class="far fa-calendar"></i>
               </span>
               <span class="post-meta-item-text">发表于</span>
+              
 
-              <time title="创建时间：2022-05-22 21:24:05" itemprop="dateCreated datePublished" datetime="2022-05-22T21:24:05+08:00">2022-05-22</time>
+              <time title="创建时间：2022-05-12 18:39:14 / 修改时间：20:10:05" itemprop="dateCreated datePublished" datetime="2022-05-12T18:39:14+08:00">2022-05-12</time>
             </span>
 
           
@@ -211,7 +212,228 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        
+        <p>前言:  这是我最近学习Lwip 整理的TCP相关的数据结构, 与大家分享</p>
+<p>一。TCP_PCB 结构<br>      &#x2F;*与其他协议一样，为了描述 TCP 协议， LwIP 定义了一个名字叫 tcp_pcb 的结构体，我们称之为<br>      TCP 控制块，其内定义了大量的成员变量，基本定义了整个 TCP 协议运作过程的所有需要的东<br>      西，如发送窗口、接收窗口、数据缓冲区。超时处理、拥塞控制、滑动窗口等等，具体见代码清<br>      单 13_3。<br>      代码清单 13‑3 TCP 控制块<br>      <em>&#x2F;<br>      #define IP_PCB <br>      &#x2F;</em> 本地 ip 地址与远端 IP 地址 <em>&#x2F; <br>      ip_addr_t local_ip; <br>      ip_addr_t remote_ip; <br>      &#x2F;</em> 绑定 netif 索引 <em>&#x2F; <br>      u8_t netif_idx; <br>      &#x2F;</em> 套接字选项 <em>&#x2F; <br>      u8_t so_options; <br>      &#x2F;</em> 服务类型 <em>&#x2F; <br>      u8_t tos; <br>      &#x2F;</em> 生存时间 <em>&#x2F; <br>      u8_t ttl <br>      &#x2F;</em> 链路层地址解析提示 *&#x2F; <br>      IP_PCB_NETIFHINT<br>      #define TCP_PCB_COMMON(type) <br>      type <em>next; &#x2F;</em> 指向链表中的下一个控制块 *&#x2F; <br>      void <em>callback_arg; <br>      TCP_PCB_EXTARGS <br>      enum tcp_state state; &#x2F;</em> TCP 状态 *&#x2F; \</p>
+<pre><code>  u8_t prio; \
+  /* 本地主机端口号 */ \
+  u16_t local_port
+  /** TCP 协议控制块 */
+  struct tcp_pcb
+  &#123;
+  IP_PCB;
+  /** 协议特定的 PCB 成员 */
+  TCP_PCB_COMMON(struct tcp_pcb);
+  /* 远端端口号 */
+  u16_t remote_port;
+  tcpflags_t flags;
+  #define TF_ACK_DELAY 0x01U /* 延迟发送 ACK */
+  #define TF_ACK_NOW 0x02U /* 立即发送 ACK. */
+  #define TF_INFR 0x04U /* 在快速恢复。 */
+  #define TF_CLOSEPEND 0x08U /* 关闭挂起 */
+  #define TF_RXCLOSED 0x10U /* rx 由 tcp_shutdown 关闭 */
+  #define TF_FIN 0x20U /* 连接在本地关闭 */
+  #define TF_NODELAY 0x40U /* 禁用 Nagle 算法 */
+  #define TF_NAGLEMEMERR 0x80U /* 本地缓冲区溢出 */
+  #define TF_TIMESTAMP 0x0400U /* Timestamp option enabled */
+  #endif
+  #define TF_RTO 0x0800U /* RTO 计时器 */
+
+  u8_t polltmr, pollinterval;
+
+  u8_t last_timer;  /* 控制块被最后一次处理的时间 */
+  u32_t tmr;     /* 该字段记录该PCB被创建的时刻 */
+  
+  /* 接收窗口相关的字段 */
+  u32_t rcv_nxt; /* 下一个期望收到的序号 */
+  tcpwnd_size_t rcv_wnd; /* 接收窗口大小 */
+  tcpwnd_size_t rcv_ann_wnd; /* 告诉对方窗口的大小 */
+  u32_t rcv_ann_right_edge; /* 窗口的右边缘 */
+
+  /* 重传计时器。 */
+  s16_t rtime;    /*重传定时，该值随时间增加，当大于rto的值时则重传发生*/
+  u16_t mss;  /* 最大报文段大小 1460 , MSS是TCP报文段中的数据字段的最大长度  MSS=TCP报文段长度-TCP首部长度*/
+
+  /* RTT（往返时间）估计变量 */
+  u32_t rttest; /* RTT 估计，以为 500 毫秒递增 */
+  u32_t rtseq; /* 用于测试 RTT 的报文段序号 */
+  s16_t sa, sv; /* RTT 估计得到的平均值与时间差 */
+  s16_t rto; /* 重传超时 */
+  u8_t nrtx; /* 重传次数 */
+
+  /* 快速重传/恢复 */
+  u8_t dupacks;
+  u32_t lastack; /* 接收到的最大确认序号 */
+
+  /* 拥塞避免/控制变量 */
+  tcpwnd_size_t cwnd; /* 连接当前的窗口大小, 拥塞窗口 */
+  tcpwnd_size_t ssthresh; /* 拥塞避免算法启动的阈值, 拥塞慢开始门限 */
+  u32_t rto_end;
+
+  u32_t snd_nxt; /* 下一个要发送的序号 , 从以太网链路层发出*/
+  u32_t snd_wl1, snd_wl2; /* 上一次收到的序号和确认号 */
+  u32_t snd_lbb; /* 要缓冲的下一个字节的序列号 ,缓存至pcb-&gt;unsent中*/
+  tcpwnd_size_t snd_wnd; /* 发送窗口大小 */
+  tcpwnd_size_t snd_wnd_max; /* 对方的最大发送方窗口 */
+
+  /* 可用的缓冲区空间（以字节为单位）。 */
+  tcpwnd_size_t snd_buf;
+  tcpwnd_size_t bytes_acked;
+  struct tcp_seg *unsent; /* 未发送的报文段 */
+  struct tcp_seg *unacked; /* 已发送但未收到确认的报文段 */
+  struct tcp_seg *ooseq; /* 已收到的无序报文 */
+  /* 以前收到但未被上层处理的数据 */
+  struct pbuf *refused_data;
+  #if LWIP_CALLBACK_API || TCP_LISTEN_BACKLOG
+  struct tcp_pcb_listen* listener;
+  #endif
+  //TCP 协议相关的回调函数
+  #if LWIP_CALLBACK_API
+  /* 当数据发送成功后被调用 */
+  tcp_sent_fn sent;
+  /* 接收数据完成后被调用 */
+  tcp_recv_fn recv;
+  /* 建立连接后被调用 */
+  tcp_connected_fn connected;
+  /* 该函数被内核周期调用 */
+  tcp_poll_fn poll;
+  /* 发送错误时候被调用 */
+  tcp_err_fn errf;
+
+
+  /* 保持活性 */
+  u32_t keep_idle;
+  /* 坚持计时器计数器值 */
+  u8_t persist_cnt;               /*(persist_cnt ++) ==(persist_backoff)*/
+  u8_t persist_backoff;           /*坚持定时器关闭与打开*/
+  u8_t persist_probe;             /*TCP 零窗口探测次数*/
+  /* 保持活性报文发送次数 */
+  u8_t keep_cnt_sent;
+  &#125;;
+
+
+  1. /*persist_probe 在 tcp_zero_window_probe(struct tcp_pcb *pcb) 中自增 */
+
+  报文结构:
+    eth_hdr(14)     ip_hdr(20)       tcp_hdr(20)        APP应用层数据域
+    以太网帧     +    IP头      +     TCP 头        +   最大数据长度
+      14              20              20                1460
+</code></pre>
+<p>二。PBUF 结构     &#x2F;<em>专为以太网报文设计</em>&#x2F;<br>    &#x2F;** Main packet buffer struct <em>&#x2F;<br>    struct pbuf {<br>      &#x2F;</em>* next pbuf in singly linked pbuf chain *&#x2F;<br>      struct pbuf *next;</p>
+<pre><code>  /** pointer to the actual data in the buffer */
+  void *payload;                                                     /*  指向数据域  */
+
+  /**
+   * total length of this buffer and all next buffers in chain
+   * belonging to the same packet.
+   *
+   * For non-queue packet chains this is the invariant:
+   * p-&gt;tot_len == p-&gt;len + (p-&gt;next? p-&gt;next-&gt;tot_len: 0)
+   */
+  u16_t tot_len;
+
+  /** length of this buffer */
+  u16_t len;                                                         /*  payload  所指向的数据域长度  */
+
+  /** a bit field indicating pbuf type and allocation sources
+      (see PBUF_TYPE_FLAG_*, PBUF_ALLOC_FLAG_* and PBUF_TYPE_ALLOC_SRC_MASK)
+    */
+  u8_t type_internal;                                               /*  PBUF_REF  PBUF_ROM  PBUF_POOL  PBUF_RAM */
+
+  /** misc flags */
+  u8_t flags;
+
+  /**
+   * the reference count always equals the number of pointers
+   * that refer to this pbuf. This can be pointers from an application,
+   * the stack itself, or pbuf-&gt;next pointers from a chain.
+   */
+  LWIP_PBUF_REF_T ref;
+
+  /** For incoming packets, this contains the input netif&#39;s index */
+  u8_t if_idx;
+&#125;;
+
+struct pbuf *p =  (struct pbuf *)mem_malloc(alloc_len);
+p所指向的内存包括三部分  --&gt;&gt;  
+                              (1)  sizeof(struct pbuf)                                               +  
+                              (2)  offset( (以太网头 14 byte) + (IP 头 20byte) + (TCP 头 20 byte) )  +
+                              (3)  应用层数据部分, 也就是 payload字段指向的内存
+
+p-&gt;payload = LWIP_MEM_ALIGN((void *)((u8_t *)p + sizeof(struct pbuf) + offset)
+p-&gt;len = payload字段指向的内存， 即数据域长度
+p-&gt;tot_len = 数据域总长度
+
+#define PBUF_LINK_ENCAPSULATION_HLEN    0
+#define PBUF_LINK_HLEN                  16    链路层    eth_hdr(14)
+#define PBUF_IP_HLEN                    20    IP 层     ip_hdr(20)
+#define PBUF_TRANSPORT_HLEN             20    TCP 层    tcp_hdr(20)
+typedef enum &#123;
+  /** Includes spare room for transport layer header, e.g. UDP header.
+   * Use this if you intend to pass the pbuf to functions like udp_send().
+   */
+  PBUF_TRANSPORT = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN + PBUF_TRANSPORT_HLEN,
+  /** Includes spare room for IP header.
+   * Use this if you intend to pass the pbuf to functions like raw_send().
+   */
+  PBUF_IP = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN + PBUF_IP_HLEN,
+  /** Includes spare room for link layer header (ethernet header).
+   * Use this if you intend to pass the pbuf to functions like ethernet_output().
+   * @see PBUF_LINK_HLEN
+   */
+  PBUF_LINK = PBUF_LINK_ENCAPSULATION_HLEN + PBUF_LINK_HLEN,
+  /** Includes spare room for additional encapsulation header before ethernet
+   * headers (e.g. 802.11).
+   * Use this if you intend to pass the pbuf to functions like netif-&gt;linkoutput().
+   * @see PBUF_LINK_ENCAPSULATION_HLEN
+   */
+  PBUF_RAW_TX = PBUF_LINK_ENCAPSULATION_HLEN,
+  /** Use this for input packets in a netif driver when calling netif-&gt;input()
+   * in the most common case - ethernet-layer netif driver. */
+  PBUF_RAW = 0                                                                      /* 此pbuf 只有数据,没有报头  sizeof(struct pbuf) + 报文数据*/
+&#125; pbuf_layer;    这个结构就是  payload字段前的 offset 偏移
+</code></pre>
+<p>三。TCP_SEG 结构</p>
+<pre><code>/* This structure represents a TCP segment on the unsent, unacked and ooseq queues */
+struct tcp_seg &#123;
+  struct tcp_seg *next;    /* used when putting segments on a queue */
+  struct pbuf *p;          /* buffer containing data + TCP header */     指向 struct pbuf * 整个报文段 , 以太网最大报文段长度1516, payload指向TCP报文首部
+  u16_t len;               /* the TCP length of this segment */          应用层数据长度, 不包括  eth_hdr(14) + ip_hdr(20) + tcp_hdr(20)，最大1460
+#if TCP_OVERSIZE_DBGCHECK
+  u16_t oversize_left;     /* Extra bytes available at the end of the last
+                              pbuf in unsent (used for asserting vs.
+                              tcp_pcb.unsent_oversize only) */
+#endif /* TCP_OVERSIZE_DBGCHECK */
+#if TCP_CHECKSUM_ON_COPY
+  u16_t chksum;
+  u8_t  chksum_swapped;
+#endif /* TCP_CHECKSUM_ON_COPY */
+  u8_t  flags;
+#define TF_SEG_OPTS_MSS         (u8_t)0x01U /* Include MSS option (only used in SYN segments) */
+#define TF_SEG_OPTS_TS          (u8_t)0x02U /* Include timestamp option. */
+#define TF_SEG_DATA_CHECKSUMMED (u8_t)0x04U /* ALL data (not the header) is
+                                              checksummed into &#39;chksum&#39; */
+#define TF_SEG_OPTS_WND_SCALE   (u8_t)0x08U /* Include WND SCALE option (only used in SYN segments) */
+#define TF_SEG_OPTS_SACK_PERM   (u8_t)0x10U /* Include SACK Permitted option (only used in SYN segments) */
+  struct tcp_hdr *tcphdr;  /* the TCP header */                      指向   tcp_hdr 头, TCP 头部
+&#125;;
+
+
+
+四.
+
+struct tcp_hdr &#123;
+  PACK_STRUCT_FIELD(u16_t src);
+  PACK_STRUCT_FIELD(u16_t dest);
+  PACK_STRUCT_FIELD(u32_t seqno);
+  PACK_STRUCT_FIELD(u32_t ackno);
+  PACK_STRUCT_FIELD(u16_t _hdrlen_rsvd_flags);
+  PACK_STRUCT_FIELD(u16_t wnd);
+  PACK_STRUCT_FIELD(u16_t chksum);
+  PACK_STRUCT_FIELD(u16_t urgp);
+&#125; PACK_STRUCT_STRUCT;
+ 
+</code></pre>
+
     </div>
 
     
@@ -236,7 +458,7 @@
   </li>
   <li class="post-copyright-link">
     <strong>本文链接：</strong>
-    <a href="http://example.com/2022/05/22/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="TCP中的数据结构">http://example.com/2022/05/22/TCP中的数据结构/</a>
+    <a href="http://example.com/2022/05/12/TCP%E4%B8%AD%E7%9A%84%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" title="TCP中的数据结构">http://example.com/2022/05/12/TCP中的数据结构/</a>
   </li>
   <li class="post-copyright-license">
     <strong>版权声明： </strong>本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> 许可协议。转载请注明出处！
@@ -252,11 +474,11 @@
 
         
     <div class="post-nav">
-      <div class="post-nav-item">
-    <a href="/2022/05/22/lwip-RTT%E6%B5%8B%E9%87%8F/" rel="prev" title="lwip-RTT测量">
-      <i class="fa fa-chevron-left"></i> lwip-RTT测量
-    </a></div>
       <div class="post-nav-item"></div>
+      <div class="post-nav-item">
+    <a href="/2022/05/12/hexo-next-%E6%90%AD%E5%BB%BA%E4%B8%AA%E4%BA%BA%E5%8D%9A%E5%AE%A2%E7%AC%94%E8%AE%B0/" rel="next" title="hexo + next 搭建个人博客笔记">
+      hexo + next 搭建个人博客笔记 <i class="fa fa-chevron-right"></i>
+    </a></div>
     </div>
       </footer>
     
