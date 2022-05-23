@@ -107,9 +107,9 @@ collections:
         editor:
           preview: true
         fields: *ref_0
-      - name: resources-index.md
-        label: 资源
-        file: source\resources\index.md
+      - name: tags-index.md
+        label: 标签
+        file: source\tags\index.md
         editor:
           preview: true
         fields: *ref_0
@@ -119,9 +119,9 @@ collections:
         editor:
           preview: true
         fields: *ref_0
-      - name: tags-index.md
-        label: 标签
-        file: source\tags\index.md
+      - name: resources-index.md
+        label: 资源
+        file: source\resources\index.md
         editor:
           preview: true
         fields: *ref_0
