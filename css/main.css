@@ -1094,7 +1094,7 @@ pre .javascript .function {
   transition-delay: 0s;
   transition-duration: 0.2s;
   transition-timing-function: ease-in-out;
-  color: #ffb6c1 !important;
+  color: #8a2be2 !important;
 }
 @media (hover: none) {
   .menu-item a:hover,
@@ -1201,7 +1201,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ff5309;
+  background: #4b77f2;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
