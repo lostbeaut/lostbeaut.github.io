@@ -1201,7 +1201,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #f733a6;
+  background: #ff9c3e;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2855,16 +2855,15 @@ code {
   width: 240px;
   z-index: 1200;
 }
+.sidebar p,
+.sidebar span,
 .sidebar a {
   border-bottom-color: #ffb6c1;
   color: #ba55d3;
 }
+.sidebar p:hover,
+.sidebar span:hover,
 .sidebar a:hover {
   border-bottom-color: $FFFFFF;
   color: #f00;
-}
-.sidebar a p,
-.sidebar a span,
-.sidebar a a {
-  color: #ffb6c1;
 }
