@@ -1200,7 +1200,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #ffb0d9;
+  background: #b861ad;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2855,7 +2855,7 @@ code {
   z-index: 1200;
 }
 .sidebar a {
-  border-bottom-color: #ffb6c1;
+  border-bottom-color: #f00;
   color: #ba55d3;
 }
 .sidebar a:hover {
