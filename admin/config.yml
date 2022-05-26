@@ -107,15 +107,15 @@ collections:
         editor:
           preview: true
         fields: *ref_0
-      - name: resources-index.md
-        label: 资源
-        file: source\resources\index.md
-        editor:
-          preview: true
-        fields: *ref_0
       - name: categories-index.md
         label: 分类
         file: source\categories\index.md
+        editor:
+          preview: true
+        fields: *ref_0
+      - name: resources-index.md
+        label: 资源
+        file: source\resources\index.md
         editor:
           preview: true
         fields: *ref_0
