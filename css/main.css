@@ -1201,7 +1201,7 @@ pre .javascript .function {
 }
 .links-of-author a::before,
 .links-of-author span.exturl::before {
-  background: #b5ffee;
+  background: #f733a6;
   border-radius: 50%;
   content: ' ';
   display: inline-block;
@@ -2862,4 +2862,9 @@ code {
 .sidebar a:hover {
   border-bottom-color: $FFFFFF;
   color: #f00;
+}
+.sidebar a p,
+.sidebar a span,
+.sidebar a a {
+  color: #ffb6c1;
 }
